@@ -1,0 +1,8 @@
+@media screen and (max-device-width: 1024px) and (orientation: landscape) {
+  .rotateText {
+    display: none !important;
+  }
+  .wrapper {
+    margin-bottom: 40px;
+  }
+}

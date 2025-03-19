@@ -1,0 +1,116 @@
+[
+  {
+    "name": "Coptex India Private Limited",
+    "desc": "Lorem ipsum deren wahts need",
+    "lastSent": "11:11 AM",
+    "unread": 0,
+    "profileImage": "",
+    "datas": [
+      {
+        "text": "Hello 👋",
+        "time": "11:45 PM",
+        "type": "sent",
+        "date": "12 Jan, 2024"
+      },
+      {
+        "text": "Can I know more?",
+        "time": "11:45 PM",
+        "type": "sent",
+        "date": "Yesterday"
+      },
+      {
+        "text": "Hey! 😎",
+        "time": "11:45PM",
+        "type": "received",
+        "date": "Yesterday"
+      },
+      {
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s",
+        "time": "11:45 PM",
+        "type": "received",
+        "date": "Today"
+      }
+    ]
+  },
+  {
+    "name": "Coir Crafts",
+    "desc": "Lorem ipsum deren wahts need",
+    "unread": 3,
+    "lastSent": "Yesterday",
+    "profileImage": "",
+    "datas": [
+      {
+        "text": "Hi From 2",
+        "time": "11:45 PM",
+        "type": "sent",
+        "date": "12 Jan, 2024"
+      },
+      {
+        "text": "hello to 2",
+        "time": "11:45 PM",
+        "type": "received",
+        "date": "Yesterday"
+      },
+      {
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s",
+        "time": "11:45 PM",
+        "type": "received",
+        "date": "Today"
+      }
+    ]
+  },
+  {
+    "name": "Coir Crafts",
+    "desc": "Lorem ipsum deren wahts need",
+    "unread": 11,
+    "lastSent": "18/01/2024",
+    "profileImage": "",
+    "datas": [
+      {
+        "text": "Hi From 3",
+        "time": "11:45 PM",
+        "type": "sent",
+        "date": "Today"
+      },
+      {
+        "text": "hello to 3",
+        "time": "11:45 PM",
+        "type": "received",
+        "date": "12 Jan, 2024"
+      },
+      {
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s",
+        "time": "11:45 PM",
+        "type": "received",
+        "date": "Yesterday"
+      }
+    ]
+  },
+  {
+    "name": "Coir Crafts",
+    "desc": "Lorem ipsum deren wahts need",
+    "lastSent": "12/01/2024",
+    "unread": 0,
+    "profileImage": "",
+    "datas": [
+      {
+        "text": "Hi From 4",
+        "time": "11:45 PM",
+        "type": "sent",
+        "date": "12 Jan, 2024"
+      },
+      {
+        "text": "hello to 4",
+        "time": "11:45 PM",
+        "type": "received",
+        "date": "Today"
+      },
+      {
+        "text": "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry’s standard dummy text ever since the 1500s",
+        "time": "11:45 PM",
+        "type": "received",
+        "date": "Yesterday"
+      }
+    ]
+  }
+]

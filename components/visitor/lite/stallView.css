@@ -1,0 +1,129 @@
+.nav-wrapper {
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.left {
+  border-radius: 0 20px 20px 0;
+}
+.right {
+  border-radius: 20px 0 0 20px;
+}
+.top {
+  border-radius: 0 0 20px 20px;
+}
+.bottom1 {
+  border-radius: 20px 0 0 0;
+}
+.left1 {
+  border-radius: 0 0 0 20px;
+}
+.iconwrap {
+  background: rgb(200, 251, 81);
+  background: radial-gradient(
+    circle,
+    rgba(200, 251, 81, 1) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
+}
+.iconani {
+  animation: increase 3s forwards;
+}
+@keyframes increase {
+  0% {
+    width: 64px;
+    height: 64px;
+  }
+  100% {
+    width: 80px;
+    height: 80px;
+  }
+}
+.likeicon {
+  animation: iconsize 1s forwards;
+}
+@keyframes iconsize {
+  0% {
+    scale: 1.3;
+  }
+  100% {
+    scale: 1;
+  }
+}
+body {
+  background-color: #808080;
+}
+
+@media screen and (max-device-width: 1024px) and (orientation: landscape) {
+  /* Styles for landscape orientation */
+  .mobileOrientation {
+    position: relative !important;
+    flex-direction: row !important;
+    transform: unset !important;
+    margin-bottom: 50px;
+  }
+  .rotateText {
+    display: none !important;
+  }
+  .topNavSocial {
+    display: flex !important;
+  }
+  .bottomSocial {
+    display: none !important;
+  }
+  .scroll-icon {
+    display: flex !important;
+  }
+}
+@keyframes lineInserted {
+  from {
+    height: 0;
+  }
+  to {
+    height: 20px; /* your line height here */
+  }
+}
+.modelDiv {
+  animation-duration: 0.3s;
+  animation-name: lineInserted;
+  transition: height 0.3s;
+}
+/* .modelDiv {
+  transition: "height 3s ease-in-out";
+} */
+
+input[type="radio"] {
+  border: 2px solid #5e6672;
+  accent-color: #5e6672;
+  border-radius: 30px;
+  position: relative;
+}
+input[type="radio"] + label {
+  color: #5e6672;
+}
+input[type="radio"]:checked {
+  border: 2px solid #000;
+  accent-color: #000;
+}
+input[type="radio"]::before {
+  content: "";
+  position: absolute;
+  z-index: 100;
+  background-color: unset;
+  height: 10px;
+  width: 10px;
+  border-radius: 20px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: background-color 0.3s ease;
+}
+input[type="radio"]:checked::before {
+  background-color: #000000;
+}
+input[type="radio"]:checked + label {
+  color: #000;
+}
+.country-list {
+  color: #000000;
+}

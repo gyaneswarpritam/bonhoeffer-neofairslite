@@ -1,0 +1,56 @@
+select {
+  -moz-appearance: none; /* Firefox */
+  -webkit-appearance: none; /* Safari and Chrome */
+  appearance: none;
+  border: none;
+  background: url("/visitor/dropdownarrow.svg") no-repeat;
+  background-position: 95% center;
+  background-color: #fff;
+  padding-left: 5%;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+  color: rgba(0, 0, 0, 0);
+  opacity: 1;
+  display: block;
+  background: url("/visitor/calendar.svg") no-repeat;
+  width: 16px;
+  height: 18px;
+  border-width: thin;
+}
+.timeSelect.available {
+  border-color: #fff;
+  background-color: #fff;
+  color: black;
+}
+.timeSelect.expired {
+  border-color: #a7a7a7;
+  color: #a7a7a7;
+}
+.timeSelect.rejected {
+  border-color: #f30505;
+  color: #f30505;
+}
+.timeSelect.booked {
+  border-color: #840cf5;
+  background-color: #fff;
+  color: #840cf5;
+}
+.timeSelect.mySlot {
+  border-color: #4abd5d;
+  background-color: #fff;
+  color: #4abd5d;
+}
+.timeSelect.pending {
+  border-color: orange;
+  background-color: #fff;
+  color: orange;
+}
+.timezoneParent > div:first-of-type {
+  min-height: 35px !important;
+  max-height: 35px !important;
+  height: 35px !important;
+  border-radius: 8px;
+  border: 0;
+  border-color: unset !important;
+  box-shadow: none;
+}

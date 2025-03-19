@@ -1,0 +1,50 @@
+import { dayjsShortFormat } from "@/lib/dayjs";
+
+export const visitedStallVisitorDef = [
+  {
+    headerName: "Company Name",
+    field: "companyName",
+    filter: true,
+    minWidth: 300,
+    flex: 1,
+    minWidth: 300,
+    autoHeight: true,
+  },
+  {
+    headerName: "Visitor Name",
+    field: "visitor",
+    filter: true,
+    minWidth: 300,
+    flex: 1,
+    minWidth: 300,
+    autoHeight: true,
+  },
+  {
+    headerName: "Visitor Email",
+    field: "visitorEmail",
+    filter: true,
+    minWidth: 300,
+    flex: 1,
+    minWidth: 300,
+    autoHeight: true,
+  },
+  {
+    headerName: "Visitor Phone",
+    field: "visitorPhone",
+    filter: true,
+    minWidth: 300,
+    flex: 1,
+    minWidth: 300,
+    autoHeight: true,
+  },
+  {
+    headerName: "Date & Time",
+    field: "updatedAt",
+    filter: true,
+    minWidth: 300,
+    flex: 1,
+    minWidth: 300,
+    autoHeight: true,
+    valueFormatter: (params) => dayjsShortFormat(params.value),
+  },
+];

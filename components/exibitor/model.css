@@ -1,0 +1,35 @@
+.ag-theme-alpine {
+  --ag-header-height: 50px;
+  --ag-font-size: 16px;
+  --ag-font-family: lato;
+  --ag-cell-horizontal-border: var(--ag-row-border-width)
+    var(--ag-row-border-style) var(--ag-row-border-color);
+}
+.ag-theme-alpine .ag-header-cell {
+  font-size: 18px;
+  --ag-cell-horizontal-border: var(--ag-row-border-width)
+    var(--ag-row-border-style) var(--ag-row-border-color);
+}
+.ag-header-cell-label {
+  justify-content: center;
+}
+.ag-row .ag-cell {
+  display: flex;
+  justify-content: center; /* align horizontal */
+  align-items: center;
+}
+.react-pdf__Page {
+  display: flex;
+  justify-content: center;
+}
+@media screen and (max-device-width: 1024px) and (orientation: landscape) {
+  .header {
+    font-size: 20px !important;
+  }
+  .headerDiv {
+    height: 60px !important;
+  }
+  .gridContainer {
+    padding-bottom: 40px !important;
+  }
+}

@@ -1,0 +1,202 @@
+.numbers.active > p {
+  color: #2a9fe8;
+  border-color: #2a9fe8;
+  font-weight: 600;
+}
+.numbers.active > div {
+  color: #2a9fe8;
+  background-color: #2a9fe8;
+  border-color: #2a9fe8;
+}
+.numbers.active {
+  cursor: pointer;
+}
+.tabs.active {
+  display: block;
+}
+.numbersDiv::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  transform: translate(0%, -50%);
+  background-color: #2a9fe8;
+}
+@media (min-width: 768px) {
+  .numbersDiv::after {
+    top: 43%;
+  }
+}
+
+.react-tabs__tab {
+  border-top: 1px solid #bcb4b4;
+  border-left: 1px solid #bcb4b4;
+  background-color: #f2f2f2;
+  bottom: 0px;
+  padding: 13px 11px;
+}
+.react-tabs__tab:last-child {
+  border-bottom: 1px solid #bcb4b4;
+  border-left: 1px solid #bcb4b4;
+  bottom: 0px;
+  padding: 13px 11px;
+}
+@media (max-width: 768px) {
+  .react-tabs__tab {
+    border-right: 1px solid #bcb4b4;
+  }
+}
+
+.react-tabs__tab--selected {
+  background-color: #dddddc;
+  border-radius: 0;
+}
+.react-tabs__tab:focus:after {
+  content: none;
+}
+input[type="file"]::file-selector-button {
+  background-color: #dddddc;
+  border: none;
+  border-radius: 8px;
+  height: 100%;
+}
+input[type="file"] {
+  padding: 4px;
+}
+.social-media-input {
+  text-align: center;
+}
+.social-media-input::-webkit-input-placeholder {
+  text-align: center;
+}
+.social-media-input:-moz-placeholder {
+  text-align: center;
+}
+
+.imageHover:hover .img {
+  display: flex;
+}
+.imageHover:hover .img1 {
+  display: flex;
+}
+.img {
+  background: rgba(0, 0, 0, 0.6);
+}
+/* .image::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transition: all 1s;
+  -webkit-transition: all 1s;
+}
+.image:hover::after {
+  opacity: 1;
+} */
+.checkbox-alias {
+  background-color: red;
+  display: inline-block;
+  width: 100%;
+  height: 100px;
+  z-index: 1;
+  position: relative;
+  transition: all 250ms ease-out;
+  cursor: pointer;
+}
+.Toastify__toast {
+  background-color: #222222;
+  color: #fff;
+}
+/* .invisible-checkboxes input[type="checkbox"]:checked + .checkbox-alias {
+  background-color: green;
+} */
+
+.checkboxProduct:checked + .label-for-check {
+  background: var(--lock-url);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: auto 16px;
+}
+.checkboxProduct + .label-for-check {
+  background: var(--unlock-url);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: auto 16px;
+}
+/* .check-with-label:checked + .label-for-check {
+  font-weight: bold;
+} */
+
+/* .innerbottomshadow {
+  position: relative;
+}
+
+.innerbottomshadow:after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+  -webkit-box-shadow: inset 0px -60px 60px -60px rgba(0, 0, 0, 0.34);
+  -moz-box-shadow: inset 0px -60px 60px -60px rgba(0, 0, 0, 0.34);
+  box-shadow: inset 0px -60px 60px -60px rgba(0, 0, 0, 0.34);
+} */
+
+.innerbottomshadow {
+  scrollbar-width: thin;
+  scrollbar-color: #868686 #dfe9eb;
+}
+
+/* Chrome, Edge and Safari */
+.innerbottomshadow::-webkit-scrollbar {
+  height: 7px;
+  width: 7px;
+}
+.innerbottomshadow::-webkit-scrollbar-track {
+  border-radius: 7px;
+  background-color: #dfe9eb;
+}
+
+.innerbottomshadow::-webkit-scrollbar-track:hover {
+  background-color: #dfe9eb;
+}
+
+.innerbottomshadow::-webkit-scrollbar-track:active {
+  background-color: #dfe9eb;
+}
+
+.innerbottomshadow::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: #2a9fe8;
+}
+
+.innerbottomshadow::-webkit-scrollbar-thumb:hover {
+  background-color: #2a9fe8;
+}
+
+.innerbottomshadow::-webkit-scrollbar-thumb:active {
+  background-color: #2a9fe8;
+}
+
+/* .innerbottomshadow {
+  position: relative; */
+/* max-height: 200px; Set your desired height for the parent div */
+/*overflow-y: auto; Enable vertical scrolling */
+/* } */
+/* 
+.innerbottomshadow::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%; */
+/* height: 10px; Set the height of the inner shadow */
+/* box-shadow: inset 0 10px 10px -10px rgba(0, 0, 0, 0.5); Adjust the shadow properties as needed */
+/* } */
