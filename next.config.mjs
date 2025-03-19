@@ -15,7 +15,7 @@ const nextConfig = {
         return config;
     },
     images: {
-        domains: ['shapes.neofairs.com'],
+        domains: ['bonhoeffer.neofairs.com'],
     },
 };
 

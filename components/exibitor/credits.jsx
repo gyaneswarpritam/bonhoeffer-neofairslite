@@ -3,8 +3,8 @@ import Image from "next/image";
 import { BUCKET_URL } from "@/config/constant";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import InstagramIcon from "@mui/icons-material/Instagram";
-import CallIcon from "@mui/icons-material/Call";
-import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import YouTubeIcon from "@mui/icons-material/YouTube";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
 
 export default function Credits() {
   return (
@@ -19,46 +19,18 @@ export default function Credits() {
           height={20}
           className="w-full h-auto"
         />
-        <div className=" flex gap-3 flex-row justify-center items-center">
-          <a href="https://www.neofairs.com/" target="_blank">
-            <InstagramIcon sx={{ fontSize: 24, color: "gray" }} />
-            {/* <Image
-              alt="instagram"
-              src={`${BUCKET_URL}/square-instagram.svg`}
-              height={100}
-              width={100}
-              className=" h-4 w-4"
-            ></Image> */}
+        <div className=" flex gap-3 flex-row justify-center items-center mt-4">
+          <a href="https://www.instagram.com/bonhoefferhn/" target="_blank">
+            <InstagramIcon sx={{ fontSize: 24, color: "black" }} />
           </a>
-          <a href="https://www.neofairs.com/" target="_blank">
-            <FacebookIcon sx={{ fontSize: 24, color: "gray" }} />
-            {/* <Image
-              alt="facebook"
-              src={`${BUCKET_URL}/square-facebook.svg`}
-              height={100}
-              width={100}
-              className=" h-4 w-4"
-            ></Image> */}
+          <a href="https://www.facebook.com/BonhoefferMachines" target="_blank">
+            <FacebookIcon sx={{ fontSize: 24, color: "black" }} />
           </a>
-          <a href="https://www.neofairs.com/" target="_blank">
-            <CallIcon sx={{ fontSize: 24, color: "gray" }} />
-            {/* <Image
-              alt="phone"
-              src={`${BUCKET_URL}/square-phone.svg`}
-              height={100}
-              width={100}
-              className=" h-4 w-4"
-            ></Image> */}
+          <a href="https://www.youtube.com/@BonhoefferHonduras" target="_blank">
+            <YouTubeIcon sx={{ fontSize: 24, color: "black" }} />
           </a>
-          <a href="https://www.neofairs.com/" target="_blank">
-            <WhatsAppIcon sx={{ fontSize: 24, color: "gray" }} />
-            {/* <Image
-              alt="whatsapp"
-              src={`${BUCKET_URL}/square-whatsapp.svg`}
-              height={100}
-              width={100}
-              className=" h-4 w-4"
-            ></Image> */}
+          <a href="https://www.linkedin.com/company/bonhoeffer-machines/" target="_blank">
+            <LinkedInIcon sx={{ fontSize: 24, color: "black" }} />
           </a>
         </div>
       </div>

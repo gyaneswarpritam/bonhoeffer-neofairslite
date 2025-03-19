@@ -38,7 +38,7 @@ export default function Exhibitors() {
         </div>
         <div className="divider w-[100%] mt-2"></div>
 
-        <div className="h-[90vh]">
+        <div className="h-auto">
           <ExhibitorApprovalListComponent status={status} />
         </div>
       </div>

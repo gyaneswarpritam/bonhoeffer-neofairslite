@@ -50,6 +50,6 @@ export const requestedCatalogDef = [
     filter: true,
     flex: 2,
     minWidth: 250,
-    valueFormatter: (params) => dayjsShortFormat(params.value),
+    valueFormatter: (params) => dayjsShortFormat(params),
   },
 ];

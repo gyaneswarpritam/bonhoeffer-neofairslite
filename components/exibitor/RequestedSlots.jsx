@@ -1,7 +1,4 @@
 "use client";
-import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
-import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import { request } from "@/lib/axios";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { notificationExhibitorUtil } from "@/lib/notification";
@@ -13,7 +10,7 @@ import {
 const RequestedSlots = () => {
   const queryClient = useQueryClient();
   const exbId =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
   const fetchSettings = async () => {
     return request({ url: "visitor/settings", method: "get" });
   };
@@ -49,9 +46,8 @@ const RequestedSlots = () => {
       });
       if (meetingData) {
         trackMeetingUtil({
-          trackEventType: `Slot ${
-            action == "approve" ? "approved" : "declined"
-          } by exhibitor.`,
+          trackEventType: `Slot ${action == "approve" ? "approved" : "declined"
+            } by exhibitor.`,
           data: {
             ...data,
             timeZone: data.timeZone,
@@ -65,15 +61,15 @@ const RequestedSlots = () => {
           visitorId: data.visitorId,
           exhibitorId: exbId,
           slotData: data,
+          status: action,
         });
       }
       queryClient.invalidateQueries("requested-slots");
       await refetch();
       notificationExhibitorUtil(
         {
-          notificationType: `Booking ${
-            action == "approve" ? "approved" : "Declined"
-          } by exhibitor.`,
+          notificationType: `Meeting ${action == "approve" ? "approved" : "Declined"
+            } by exhibitor.`,
           data: {
             bookingDate: data.date,
             meetingId: data.meetingId,
@@ -113,14 +109,6 @@ const RequestedSlots = () => {
 
   const tableColumnDef = [
     {
-      headerName: "Meeting Id",
-      field: "meetingId",
-      filter: true,
-      minWidth: 230,
-      flex: 1,
-      autoHeight: true,
-    },
-    {
       headerName: "Date",
       field: "date",
       filter: true,
@@ -159,17 +147,17 @@ const RequestedSlots = () => {
       minWidth: 100,
       flex: 1,
       autoHeight: true,
-      cellRenderer: (params) =>
+      renderCell: (params) =>
         params.value == "pending"
           ? "Pending"
           : params.value == "rejected"
-          ? "Declined"
-          : "Booked",
+            ? "Declined"
+            : "Booked",
     },
     {
       headerName: "Action",
       minWidth: 200,
-      cellRenderer: (params) => {
+      renderCell: (params) => {
         return (
           <div
             style={{
@@ -200,13 +188,13 @@ const RequestedSlots = () => {
       headerName: "Meeting Link",
       field: "meetingLink",
       minWidth: 300,
-      cellRenderer: (params) => {
-        if (params.data.status !== "booked") {
+      renderCell: (params) => {
+        if (params.row.status !== "booked") {
           return null; // Return nothing if the status is not 'booked'
         }
 
         // const [meetingLink, setMeetingLink] = useState(
-        //   params.data.meetingLink || ""
+        //   params.row.meetingLink || ""
         // );
 
         // const handleSaveClick = () => {
@@ -216,15 +204,15 @@ const RequestedSlots = () => {
         return (
           <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
             {settingsData &&
-            settingsData[0] &&
-            settingsData[0]?.meetingType == "customVideo" ? (
+              settingsData[0] &&
+              settingsData[0]?.meetingType == "customVideo" ? (
               <a
                 href={settingsData[0]?.customVideoLink}
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{ color: "blue" }}
               >
-                Open Link
+                Join Meeting
               </a>
             ) : (
               <div>Check "Join Meeting" menu</div>
@@ -253,12 +241,11 @@ const RequestedSlots = () => {
     >
       <div className="w-full h-full relative bottom-0 bg-white mx-auto my-auto flex flex-col items-start mt-5 rounded-lg overflow-hidden">
         <div className="ag-theme-alpine h-96 gridContainer pb-1 w-full">
-          <AgGridReact
-            style={{ width: "100%", height: "100%" }}
+          <CommonDataTableView
+            columns={tableColumnDef}
             rowData={requestedslots}
-            columnDefs={tableColumnDef}
-            autoSizeColumns={true}
-          ></AgGridReact>
+            filename={""}
+          />
         </div>
       </div>
     </section>

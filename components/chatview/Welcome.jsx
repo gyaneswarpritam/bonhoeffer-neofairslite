@@ -15,6 +15,7 @@ export default function Welcome({ handleClose }) {
           width={3000}
           height={3000}
           className="w-4 aspect-square h-auto "
+          alt="close"
         />
       </div>
       <div className="text-center" style={{ marginTop: "15%", width: "100%" }}>

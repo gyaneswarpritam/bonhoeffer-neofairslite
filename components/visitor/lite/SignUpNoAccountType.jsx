@@ -105,10 +105,10 @@ const SignUpWithNoAccountType = ({
         // toast.success(user.message, {
         //   position: toast.POSITION.TOP_RIGHT,
         // });
-        sessionStorage.setItem("token", user.token);
-        sessionStorage.setItem("role", "visitor");
-        sessionStorage.setItem("name", user.name);
-        sessionStorage.setItem("id", user.id);
+        localStorage.setItem("token", user.token);
+        localStorage.setItem("role", "visitor");
+        localStorage.setItem("name", user.name);
+        localStorage.setItem("id", user.id);
         trackUtil({
           trackEventType: "Login",
         });
@@ -167,17 +167,17 @@ const SignUpWithNoAccountType = ({
             {process ? (
               <button
                 type="button"
-                class="bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto inline-flex items-center"
+                className="bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto inline-flex items-center"
                 disabled
               >
                 <svg
-                  class="animate-spin h-5 w-5 mr-3 text-white"
+                  className="animate-spin h-5 w-5 mr-3 text-white"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                 >
                   <circle
-                    class="opacity-25"
+                    className="opacity-25"
                     cx="12"
                     cy="12"
                     r="10"
@@ -185,7 +185,7 @@ const SignUpWithNoAccountType = ({
                     stroke-width="4"
                   ></circle>
                   <path
-                    class="opacity-75"
+                    className="opacity-75"
                     fill="currentColor"
                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                   ></path>
@@ -196,9 +196,8 @@ const SignUpWithNoAccountType = ({
               <button
                 onClick={handleVerify}
                 disabled={verifyButtonDisabled}
-                className={`${
-                  verifyButtonDisabled ? "opacity-50" : ""
-                } mt-10 bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto`}
+                className={`${verifyButtonDisabled ? "opacity-50" : ""
+                  } mt-10 bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto`}
               >
                 Verify
               </button>
@@ -206,9 +205,8 @@ const SignUpWithNoAccountType = ({
             <button
               disabled={showTimer}
               onClick={resendOTP}
-              className={`${
-                showTimer ? "opacity-50" : ""
-              } mt-10 bg-[#FB5151] text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto`}
+              className={`${showTimer ? "opacity-50" : ""
+                } mt-10 bg-[#FB5151] text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto`}
             >
               Resend
             </button>

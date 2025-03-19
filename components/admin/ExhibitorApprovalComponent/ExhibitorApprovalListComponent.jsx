@@ -3,10 +3,10 @@ import { request } from "@/lib/axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import React, { useState } from "react";
-import TableMain from "../tableMain";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { BUCKET_URL } from "@/config/constant";
+import CommonDataTable from "@/components/grid/CommonDataTable";
 
 const ExhibitorApprovalListComponent = ({ status }) => {
   const [modelOpen, setModelOpen] = useState(false);
@@ -43,7 +43,7 @@ const ExhibitorApprovalListComponent = ({ status }) => {
       //   field: "isView",
       //   filter: true,
       //   width: 130,
-      //   cellRenderer: (params) => {
+      //   renderCell: (params) => {
       //     return (
       //       <div className="flex flex-col items-start justify-center h-full">
       //         <Image
@@ -64,11 +64,11 @@ const ExhibitorApprovalListComponent = ({ status }) => {
         field: "Block",
         filter: true,
         width: 130,
-        cellRenderer: (params) => {
+        renderCell: (params) => {
           return (
             <div className="flex flex-col items-start justify-center h-full">
               <Image
-                onClick={() => blockExhibitor(params.data._id)}
+                onClick={() => blockExhibitor(params.row._id)}
                 alt="block_icon"
                 width={100}
                 height={100}
@@ -102,7 +102,7 @@ const ExhibitorApprovalListComponent = ({ status }) => {
       //   field: "isView",
       //   filter: true,
       //   width: 130,
-      //   cellRenderer: (params) => {
+      //   renderCell: (params) => {
       //     return (
       //       <div className="flex flex-col items-start justify-center h-full">
       //         <Image
@@ -123,11 +123,11 @@ const ExhibitorApprovalListComponent = ({ status }) => {
         field: "Restore",
         filter: true,
         width: 130,
-        cellRenderer: (params) => {
+        renderCell: (params) => {
           return (
             <div className="flex flex-col items-start justify-center h-full">
               <Image
-                onClick={() => restoreExhibitor(params.data._id)}
+                onClick={() => restoreExhibitor(params.row._id)}
                 alt="approval_icon"
                 width={100}
                 height={100}
@@ -161,7 +161,7 @@ const ExhibitorApprovalListComponent = ({ status }) => {
       //   field: "isView",
       //   filter: true,
       //   width: 130,
-      //   cellRenderer: (params) => {
+      //   renderCell: (params) => {
       //     return (
       //       <div className="flex flex-col items-start justify-center h-full">
       //         <Image
@@ -182,11 +182,11 @@ const ExhibitorApprovalListComponent = ({ status }) => {
         field: "Restore To Request",
         filter: true,
         width: 130,
-        cellRenderer: (params) => {
+        renderCell: (params) => {
           return (
             <div className="flex flex-col items-start justify-center h-full">
               <Image
-                onClick={() => restoreToRequest(params.data._id)}
+                onClick={() => restoreToRequest(params.row._id)}
                 alt="approval_icon"
                 width={100}
                 height={100}
@@ -220,7 +220,7 @@ const ExhibitorApprovalListComponent = ({ status }) => {
       //   field: "isView",
       //   filter: true,
       //   width: 130,
-      //   cellRenderer: (params) => {
+      //   renderCell: (params) => {
       //     return (
       //       <div className="flex flex-col items-start justify-center h-full">
       //         <Image
@@ -241,12 +241,12 @@ const ExhibitorApprovalListComponent = ({ status }) => {
         field: "Approve",
         filter: true,
         width: 130,
-        cellRenderer: (params) => {
+        renderCell: (params) => {
           return (
             <div className="flex flex-col items-start justify-center h-full">
               <Image
                 onClick={() =>
-                  approveExhibitor(params.data._id, params.data.email)
+                  approveExhibitor(params.row._id, params.row.email)
                 }
                 alt="approval_icon"
                 width={100}
@@ -262,7 +262,7 @@ const ExhibitorApprovalListComponent = ({ status }) => {
         field: "Reject",
         filter: true,
         width: 130,
-        cellRenderer: (params) => {
+        renderCell: (params) => {
           return (
             <div className="flex flex-col items-start justify-center h-full">
               <Image
@@ -271,7 +271,7 @@ const ExhibitorApprovalListComponent = ({ status }) => {
                 height={100}
                 className={`cursor-pointer w-auto h-4`}
                 src={`${BUCKET_URL}/admin/notApproved.svg`}
-                onClick={() => rejectExhibitor(params.data._id)}
+                onClick={() => rejectExhibitor(params.row._id)}
               />
             </div>
           );
@@ -347,8 +347,8 @@ const ExhibitorApprovalListComponent = ({ status }) => {
 
   return (
     <>
-      <TableMain
-        columnDefs={columns}
+      <CommonDataTable
+        columns={columns}
         rowData={data}
         filename={"Exhibitor-Approval"}
       />

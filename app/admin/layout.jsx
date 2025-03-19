@@ -1,11 +1,13 @@
 "use client";
 import SideNav from "@/components/admin/side-nav";
 import "../admin/style.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function RootLayout({ children }) {
+  const router = useRouter();
   const name =
-    typeof window !== "undefined" ? sessionStorage.getItem("name") : null;
+    typeof window !== "undefined" ? localStorage.getItem("name") : null;
   const user = {
     name: name,
     role: "Admin",
@@ -16,6 +18,22 @@ export default function RootLayout({ children }) {
   const toggleMenu = () => {
     setCurrentMenu(!currentMenu);
   };
+
+  useEffect(() => {
+    // Ensure this runs only on the client
+    const storedAdminId = localStorage.getItem("id");
+    const role = localStorage.getItem("role");
+
+    if (role == "exhibitor") {
+      router.push("/exhibitor");
+    } else if (role == "visitor") {
+      router.push("/visitor");
+    }
+
+    if (!storedAdminId) {
+      router.push("/admin-login");
+    }
+  }, []);
 
   return (
     <div className="w-full lg:px-4 px-2 lg:custom-color-bg bg-bg-grey">
@@ -30,9 +48,8 @@ export default function RootLayout({ children }) {
         )}
 
         <div
-          className={`bg-white ${
-            currentMenu ? "lg:w-[80%]" : "lg:w-[100%]"
-          } w-full  lg:py-4 lg:px-4 px-2 py-2`}
+          className={`bg-white ${currentMenu ? "lg:w-[80%]" : "lg:w-[100%]"
+            } w-full  lg:py-4 lg:px-4 px-2 py-2`}
         >
           <button
             className="text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700"

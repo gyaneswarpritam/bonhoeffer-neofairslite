@@ -28,7 +28,7 @@ const ExhibitorProfile = ({ closeProfile, profileData }) => {
         <button
           onClick={closeProfile}
           type="button"
-          className="ml-4 mt-10 bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto"
+          className="md:ml-4 sm:ml-0 md:mt-10 mt-2 xs:mt-2 bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto"
         >
           Close
         </button>

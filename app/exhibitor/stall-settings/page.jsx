@@ -35,7 +35,7 @@ function Page() {
   // };
   return (
     <section
-      className="lg:pl-3 lg:pr-5 lg:py-5 bg-white no-scrollbar w-full relative pt-16 pb-24 px-3 lg:min-h-screen  flex flex-col gap-[1.25rem]"
+      className="lg:pl-3 lg:pr-5 lg:py-5 bg-white no-scrollbar w-full relative pt-16  px-3 lg:min-h-screen  flex flex-col gap-[1.25rem]"
       id="main-content-body"
     >
       <LocationBand />

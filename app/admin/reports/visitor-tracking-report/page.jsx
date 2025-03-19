@@ -14,7 +14,7 @@ export default function VisitorTrackingReport() {
         </div>
         <div className="divider w-[100%] mt-2"></div>
 
-        <div className="h-[90vh]">
+        <div className="h-auto">
           <VisitorTrackingReportComponent />
         </div>
       </div>

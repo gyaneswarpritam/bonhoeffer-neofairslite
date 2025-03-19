@@ -17,7 +17,7 @@ const ChatContainer = ({
   const [messages, setMessages] = useState([]);
   const scrollRef = useRef();
   const [arrivalMessage, setArrivalMessage] = useState(null);
-  const visitorId = sessionStorage.getItem("id");
+  const visitorId = localStorage.getItem("id");
 
   useEffect(() => {
     const fetchData = async () => {

@@ -17,7 +17,7 @@ import axios from "axios";
 
 const Chatview = ({ handleClose }) => {
   const exhibitorId =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
   const socket = useRef();
 
   const [activeList, setActiveList] = useState(0);
@@ -117,9 +117,8 @@ const Chatview = ({ handleClose }) => {
 
   return (
     <div
-      className={` ${isMobile && "w-full h-full"} ${
-        isDesktop && "w-[100%] h-[90%] max-h-[710px] rounded-2xl"
-      } fixed max-w-6xl bg-white m-auto flex flex-row z-[1000]`}
+      className={` ${isMobile && "w-full h-full"} ${isDesktop && "w-[100%] h-[90%] max-h-[710px] rounded-2xl"
+        } fixed max-w-6xl bg-white m-auto flex flex-row z-[1000]`}
     >
       {isDesktop && (
         <>

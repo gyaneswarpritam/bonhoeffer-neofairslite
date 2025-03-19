@@ -1,18 +1,16 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { AgGridReact } from "ag-grid-react";
-
-import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
-import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import { request } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import { trackUtil } from "@/lib/track";
 import { dayjsShortFormat } from "@/lib/dayjs";
+import CommonDataTableView from "../grid/CommonDataTableView";
 
 const NotificationComponent = () => {
   const gridRef = useRef();
   const visitorId =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
+  const [processedNotifications, setProcessedNotifications] = useState([]);
   const fetchNotification = async () => {
     return request({
       url: `visitor/all-notification/${visitorId}`,
@@ -45,6 +43,19 @@ const NotificationComponent = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (notifications) {
+      const transformedNotifications = notifications.map((item) => ({
+        ...item,
+        exhibitorName: item.exhibitor?.name || "",
+        exhibitorCompany: item.exhibitor?.companyName || "",
+        exhibitorEmail: item.exhibitor?.email || "",
+        exhibitorPhone: item.exhibitor?.phone || "",
+      }));
+      setProcessedNotifications(transformedNotifications);
+    }
+  }, [notifications]);
+
   const noficationColumnDef = [
     {
       headerName: "Notification Type",
@@ -53,24 +64,23 @@ const NotificationComponent = () => {
       width: 300,
     },
     {
-      headerName: "Booking Date",
+      headerName: "Meeting Date",
       field: "createdAt",
       filter: true,
       width: 300,
-      valueFormatter: (params) => dayjsShortFormat(params.value),
+      valueFormatter: (params) => dayjsShortFormat(params),
     },
     {
       headerName: "Exhibitor Name",
-      field: "exhibitor.name",
+      field: "exhibitorName",
       filter: true,
-      valueGetter: (params) => `${params.data.exhibitor.name} `,
       width: 200,
       flex: 1,
       minWidth: 200,
     },
     {
       headerName: "Company Name",
-      field: "exhibitor.companyName",
+      field: "exhibitorCompany",
       filter: true,
       width: 200,
       flex: 1,
@@ -78,7 +88,7 @@ const NotificationComponent = () => {
     },
     {
       headerName: "Email",
-      field: "exhibitor.email",
+      field: "exhibitorEmail",
       filter: true,
       width: 250,
       flex: 2,
@@ -86,28 +96,36 @@ const NotificationComponent = () => {
     },
     {
       headerName: "Phone Number",
-      field: "exhibitor.phone",
+      field: "exhibitorPhone",
       filter: true,
       width: 200,
       flex: 1,
       minWidth: 200,
     },
+    {
+      headerName: "Date & Time",
+      field: "updatedAt",
+      filter: true,
+      minWidth: 300,
+      flex: 1,
+      minWidth: 300,
+      autoHeight: true,
+      valueFormatter: (params) => dayjsShortFormat(params),
+    },
   ];
 
   return (
     <section
-      className="lg:pl-3 lg:pr-5 lg:py-5 bg-white w-full h-full relative pt-20 pb-4 px-3 lg:min-h-screen  flex flex-col"
+      className="lg:pl-3 lg:pr-5 lg:py-5 bg-white w-full h-full relative pt-2 pb-4 px-3 lg:min-h-screen  flex flex-col"
       id="main-content-body"
     >
       <div className="w-full min-h-[80vh] h-[80vh] relative bottom-0 bg-white mx-auto my-auto flex flex-col justify-center items-start mt-5 rounded-lg overflow-hidden">
         <div className="ag-theme-alpine h-full gridContainer pb-1 w-full ">
-          <AgGridReact
-            ref={gridRef}
-            rowData={notifications}
-            columnDefs={noficationColumnDef}
-            rowHeight={50}
-            autoSizeColumns={true}
-          ></AgGridReact>
+          <CommonDataTableView
+            columns={noficationColumnDef}
+            rowData={processedNotifications}
+            filename={""}
+          />
         </div>
       </div>
     </section>

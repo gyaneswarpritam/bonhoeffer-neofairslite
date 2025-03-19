@@ -1,0 +1,78 @@
+/* Modal styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 700px; /* Adjusted max-width to fit 2 columns better */
+  width: 100%;
+  display: grid; /* Use grid for layout */
+  gap: 20px; /* Adds space between columns */
+}
+
+.modal-content form {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two-column layout for the form fields */
+  gap: 10px; /* Space between fields */
+  width: 100%;
+}
+
+.modal-content label {
+  margin-bottom: 8px;
+}
+
+.modal-content input {
+  margin-bottom: 12px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.modal-content button {
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-content .btn-cancel {
+  background-color: red;
+  color: white;
+  margin-right: 10px;
+}
+
+.modal-content .btn-save {
+  background-color: green;
+  color: white;
+}
+
+.modal-content button:disabled {
+  background-color: #ccc;
+}
+
+@media (max-width: 768px) {
+  /* On smaller screens, switch to one column */
+  .modal-content {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-content form {
+    grid-template-columns: 1fr; /* Single column layout for form fields */
+  }
+}
+
+.input-new {
+  margin-top: 0;
+  margin-bottom: 0;
+}

@@ -103,6 +103,12 @@ const ReviewSettings = ({ dataObject, plus, minus, stallData }) => {
               {dataObject.social_media.twitter}
             </span>
           </p>
+          <p className=" text-base font-quickSand font-bold">
+            Instagram :&nbsp;
+            <span className=" text-base font-quickSand font-medium">
+              {dataObject.social_media.instagram}
+            </span>
+          </p>
         </div>
       </div>
       <div className=" border-t-[1px] text-base font-quickSand font-bold flex justify-start gap-5 pt-5 pb-10">

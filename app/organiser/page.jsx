@@ -51,7 +51,7 @@ export default function Exhibitor() {
           </section>
 
           <section
-            className="md:pl-3 md:pr-5 md:py-5 bg-white md:w-[80%] w-full relative pt-16 pb-24 px-3 overflow-hidden md:h-screen "
+            className="md:pl-3 md:pr-5 md:py-5 bg-white md:w-[80%] w-full relative pt-16  px-3 overflow-hidden md:h-screen "
             id="main-content-body"
           >
             <div
@@ -149,11 +149,11 @@ export default function Exhibitor() {
                   <div className="md:mt-5 relative">
                     {events.length < 4
                       ? events.map((event, index) => {
-                          return <ListComponents1 key={index} event={event} />;
-                        })
+                        return <ListComponents1 key={index} event={event} />;
+                      })
                       : events.slice(0, 4).map((event, index) => {
-                          return <ListComponents1 key={index} event={event} />;
-                        })}
+                        return <ListComponents1 key={index} event={event} />;
+                      })}
                     <p className="md:absolute text-red mt-2 md:mt-0 text-xs font-lato font-bold cursor-pointer right-0 -bottom-6 underline text-right md:text-left">
                       See More &gt; &gt;
                     </p>
@@ -164,11 +164,11 @@ export default function Exhibitor() {
                   <div className="md:mt-5 relative grid md:grid-cols-3 gap-2 grid-cols-1 pl-5 pt-3 md:pt-0 md:pl-5">
                     {events.length < 6
                       ? events.map((event, index) => {
-                          return <ListComponents2 key={index} event={event} />;
-                        })
+                        return <ListComponents2 key={index} event={event} />;
+                      })
                       : events.slice(0, 6).map((event, index) => {
-                          return <ListComponents2 key={index} event={event} />;
-                        })}
+                        return <ListComponents2 key={index} event={event} />;
+                      })}
                     <p className="md:absolute text-right mt-2 md:mt-0 text-red text-xs font-lato font-bold cursor-pointer right-0 -bottom-14 underline">
                       See More &gt; &gt;
                     </p>
@@ -184,11 +184,11 @@ export default function Exhibitor() {
                 <div className="md:mt-5 pl-5 md:pl-0">
                   {events.length < 8
                     ? events.map((event, index) => {
-                        return <ListComponents3 key={index} event={event} />;
-                      })
+                      return <ListComponents3 key={index} event={event} />;
+                    })
                     : events.slice(0, 8).map((event, index) => {
-                        return <ListComponents3 key={index} event={event} />;
-                      })}
+                      return <ListComponents3 key={index} event={event} />;
+                    })}
                 </div>
               </div>
 

@@ -18,8 +18,8 @@ function VideoChatComponent() {
   useEffect(() => {
     if (id) {
       setTopic(id);
-      // Fetch name from sessionStorage or any other source
-      const storedName = sessionStorage.getItem("name");
+      // Fetch name from localStorage or any other source
+      const storedName = localStorage.getItem("name");
       setName(storedName || ""); // Set name to state
     }
   }, [id]);
@@ -27,7 +27,7 @@ function VideoChatComponent() {
   useEffect(() => {
     // Generate video URL with topic and name
     if (topic && name) {
-      const url = `https://zoom-react-one.vercel.app/?topic=${topic}&name=${name}`;
+      const url = `https://sample-video-eight.vercel.app/video?topic=${topic}&name=${name}`;
       setVideoUrl(url);
     }
   }, [topic, name]);
@@ -40,7 +40,7 @@ function VideoChatComponent() {
       await request({
         url: `exhibitor/instant-meeting/${id}`,
         method: "put",
-        data: { approve: false, completed: true },
+        data: { approve: false, completed: true, inProgress: false },
       });
       router.back();
     }

@@ -49,6 +49,6 @@ export const VisitorsStallDef = [
     field: "updatedAt",
     filter: true,
     width: 150,
-    valueFormatter: (params) => dayjsShortFormat(params.value),
+    valueFormatter: (params) => dayjsShortFormat(params),
   },
 ];

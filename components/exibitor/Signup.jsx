@@ -9,6 +9,9 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { trackUtil } from "@/lib/track";
+import Link from "next/link";
+import { request } from "@/lib/axios";
+import { useQuery } from "@tanstack/react-query";
 
 const Signup = () => {
   const router = useRouter();
@@ -21,6 +24,17 @@ const Signup = () => {
   const [phoneError, setPhoneError] = useState(null);
   const [process, setProcess] = useState(false);
   const phoneInputRef = useRef(null);
+
+  const fetchSettings = async () => {
+    return request({ url: "visitor/settings", method: "get" });
+  };
+
+  const {
+    data: settingsData,
+  } = useQuery({
+    queryKey: ["settingsData"],
+    queryFn: fetchSettings,
+  });
 
   const {
     register,
@@ -52,18 +66,25 @@ const Signup = () => {
   };
 
   const onSubmitLogin = async (data) => {
+    const response = await axios.get("https://api.ipify.org?format=json");
+    const userIP = response.data.ip;
+    const payload = {
+      email: data.email,
+      password: data.password,
+      loggedInIP: userIP
+    };
     try {
       setProcess(true);
-      const response = await axios.post(`${BASE_URL}exhibitor/login`, data);
+      const response = await axios.post(`${BASE_URL}exhibitor/login`, payload);
 
       // Check if the response status is within the success range (200-299)
       if (response.status == 200) {
         const user = response.data;
         setProcess(false);
-        sessionStorage.setItem("token", user.token);
-        sessionStorage.setItem("role", "visitor");
-        sessionStorage.setItem("name", user.name);
-        sessionStorage.setItem("id", user.id);
+        localStorage.setItem("token", user.token);
+        localStorage.setItem("role", "exhibitor");
+        localStorage.setItem("name", user.name);
+        localStorage.setItem("id", user.id);
         trackUtil({
           trackEventType: "Login",
         });
@@ -95,132 +116,173 @@ const Signup = () => {
         <>
           <div className="modelDiv text-white mx-5 max-h-[90%] bg-white rounded-[20px] overflow-y-auto w-full md:w-fit max-w-[90%] flex flex-col justify-between">
             {haveAccount ? (
-              <div className="w-full md:w-[470px] md:p-[30px] p-5">
-                <div className="flex flex-row gap-2 items-center">
-                  <Image
-                    alt="dummy"
-                    src={`${BUCKET_URL}/neofairs-lite/Exhibitors.svg`}
-                    width={3000}
-                    height={3000}
-                    className="w-auto h-10"
-                  />
-                  <h1 className="text-3xl font-bold text-black font-quickSand">
-                    Exhibitor Login
-                  </h1>
-                </div>
-                <form onSubmit={handleSubmit(onSubmitLogin)}>
-                  <div className="mt-1 flex flex-col">
-                    <p className="text-black font-bold font-quickSand text-base">
-                      *Email
-                    </p>
-                    <input
-                      type="text"
-                      {...register("email", {
-                        required: "Email is required",
-                        pattern: {
-                          value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                          message: "Enter a valid email address",
-                        },
-                      })}
-                      className={`border border-black h-12 rounded-lg text-black px-3 font-quickSand font-semibold text-sm ${
-                        errors.email ? "border-red-500" : ""
-                      }`}
-                    />
-                    {errors.email && (
-                      <p className="text-red font-semibold font-lato text-xs mt-2">
-                        {errors.email.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="mt-5 flex flex-col gap-2">
-                    <p className="text-black font-bold font-quickSand text-base">
-                      *Password
-                    </p>
-                    <input
-                      type="password"
-                      {...register("password", {
-                        required: "Password is required",
-                        // pattern: {
-                        //   value:
-                        //     /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                        //   message:
-                        //     "Password must be at least 8 characters long, with at least 1 uppercase letter, 1 number, and 1 special character",
-                        // },
-                      })}
-                      className={`border border-black h-12 rounded-lg text-black px-3 font-quickSand font-semibold text-sm ${
-                        errors.password ? "border-red-500" : ""
-                      }`}
-                    />
-                    {errors.password && (
-                      <p className="text-red font-semibold font-lato text-xs mt-2">
-                        {errors.password.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="mt-10">
-                    {process ? (
+              settingsData && settingsData.length && settingsData[0].blockExhibitorLogin ?
+                <>
+                  <div className="w-full md:w-[470px] md:p-[30px] p-5">
+                    <div className="flex flex-row gap-2 items-center">
+                      <Image
+                        alt="dummy"
+                        src={`${BUCKET_URL}/neofairs-lite/Exhibitors.svg`}
+                        width={3000}
+                        height={3000}
+                        className="w-auto h-10"
+                      />
+                      <h1 className="text-3xl font-bold text-black font-quickSand">
+                        Exhibitor Login
+                      </h1>
+                    </div>
+                    <div className="mt-5">
+                      <div className="flex flex-row gap-4">
+                        <div className="flex flex-row justify-start items-center gap-[5px]">
+                          <div dangerouslySetInnerHTML={{ __html: settingsData[0].blockMessage }}
+                            style={{ color: "black" }} />
+                          {/* <p className="  text-black font-quickSand">
+                            The fair has not started yet, and login access is currently restricted.
+                            Please check the event schedule and return when the fair is live.
+                            If you have any questions, feel free to contact our support team.
+                          </p> */}
+                        </div>
+                      </div>
                       <button
-                        type="button"
-                        class="bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto inline-flex items-center"
-                        disabled
+                        onClick={() => setHaveAccount(false)}
+                        className=" bg-black text-white px-6 py-3 mt-4 rounded-lg font-lato font-bold text-base w-full md:w-auto"
                       >
-                        <svg
-                          class="animate-spin h-5 w-5 mr-3 text-white"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle
-                            class="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            stroke-width="4"
-                          ></circle>
-                          <path
-                            class="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                          ></path>
-                        </svg>
-                        Processing...
+                        Back
                       </button>
-                    ) : (
-                      <button className="bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto">
-                        Login
-                      </button>
-                    )}
-
-                    <div className="flex flex-row gap-2">
-                      <p
-                        onClick={() => {
-                          setHaveAccount(false);
-                          setForget(true);
-                        }}
-                        className="text-[#2A9FE8] text-sm font-quickSand underline font-semibold mt-2 cursor-pointer"
-                      >
-                        Forgot Password?
-                      </p>
-                      <p
-                        onClick={() => setHaveAccount(!haveAccount)}
-                        className="text-[#2A9FE8] text-sm font-quickSand underline font-semibold mt-2 cursor-pointer"
-                      >
-                        New User?
-                      </p>
                     </div>
                   </div>
-                  <div className="mt-10">
+                </>
+                :
+                <div className="w-full md:w-[470px] md:p-[30px] p-5">
+                  <div className="flex flex-row gap-2 items-center">
                     <Image
-                      src={`${BUCKET_URL}/neofairs-lite/logo.svg`}
-                      alt="lite-logo"
+                      alt="dummy"
+                      src={`${BUCKET_URL}/neofairs-lite/Exhibitors.svg`}
                       width={3000}
                       height={3000}
-                      className="w-full max-w-[205px]"
+                      className="w-auto h-10"
                     />
+                    <h1 className="text-3xl font-bold text-black font-quickSand">
+                      Exhibitor Login
+                    </h1>
                   </div>
-                </form>
-              </div>
+                  <form onSubmit={handleSubmit(onSubmitLogin)}>
+                    <div className="mt-1 flex flex-col">
+                      <p className="text-black font-bold font-quickSand text-base">
+                        *Email
+                      </p>
+                      <input
+                        type="text"
+                        {...register("email", {
+                          required: "Email is required",
+                          pattern: {
+                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                            message: "Enter a valid email address",
+                          },
+                        })}
+                        className={`border border-black h-12 rounded-lg text-black px-3 font-quickSand font-semibold text-sm ${errors.email ? "border-red-500" : ""
+                          }`}
+                      />
+                      {errors.email && (
+                        <p className="text-red font-semibold font-lato text-xs mt-2">
+                          {errors.email.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="mt-5 flex flex-col gap-2">
+                      <p className="text-black font-bold font-quickSand text-base">
+                        *Password
+                      </p>
+                      <input
+                        type="password"
+                        {...register("password", {
+                          required: "Password is required",
+                          // pattern: {
+                          //   value:
+                          //     /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                          //   message:
+                          //     "Password must be at least 8 characters long, with at least 1 uppercase letter, 1 number, and 1 special character",
+                          // },
+                        })}
+                        className={`border border-black h-12 rounded-lg text-black px-3 font-quickSand font-semibold text-sm ${errors.password ? "border-red-500" : ""
+                          }`}
+                      />
+                      {errors.password && (
+                        <p className="text-red font-semibold font-lato text-xs mt-2">
+                          {errors.password.message}
+                        </p>
+                      )}
+                    </div>
+                    <div className="mt-10">
+                      {process ? (
+                        <button
+                          type="button"
+                          className="bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto inline-flex items-center"
+                          disabled
+                        >
+                          <svg
+                            className="animate-spin h-5 w-5 mr-3 text-white"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              stroke-width="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                            ></path>
+                          </svg>
+                          Processing...
+                        </button>
+                      ) : (
+                        <button className="bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto">
+                          Login
+                        </button>
+                      )}
+
+                      <div className="flex flex-row gap-2">
+                        <p
+                          onClick={() => {
+                            setHaveAccount(false);
+                            setForget(true);
+                          }}
+                          className="text-[#2A9FE8] text-sm font-quickSand underline font-semibold mt-2 cursor-pointer"
+                        >
+                          Forgot Password?
+                        </p>
+                        <p
+                          onClick={() => setHaveAccount(!haveAccount)}
+                          className="text-[#2A9FE8] text-sm font-quickSand underline font-semibold mt-2 cursor-pointer"
+                        >
+                          New User?
+                        </p>
+                        <Link
+                          href={"/stall-manager-login"}
+                          className="text-[#2A9FE8] text-sm font-quickSand underline font-semibold ml-10 mt-2 cursor-pointer"
+                        >
+                          Stall Manager
+                        </Link>
+                      </div>
+                    </div>
+                    <div className="mt-10">
+                      <Image
+                        src={`${BUCKET_URL}/neofairs-lite/logo.svg`}
+                        alt="lite-logo"
+                        width={3000}
+                        height={3000}
+                        className="w-full max-w-[205px]"
+                      />
+                    </div>
+                  </form>
+                </div>
             ) : forget ? (
               <div className="w-full md:w-[470px] md:p-[30px] p-5">
                 <Forgetpassword />
@@ -242,9 +304,8 @@ const Signup = () => {
                           {...register("name", {
                             required: "Name is required",
                           })}
-                          className={`border border-black h-12 rounded-lg text-black px-3 font-quickSand font-semibold text-sm ${
-                            errors.name ? "border-red-500" : ""
-                          }`}
+                          className={`border border-black h-12 rounded-lg text-black px-3 font-quickSand font-semibold text-sm ${errors.name ? "border-red-500" : ""
+                            }`}
                         />
                         {errors.name && (
                           <p className="text-red font-semibold font-lato text-xs mt-2">
@@ -265,9 +326,8 @@ const Signup = () => {
                               message: "Enter a valid email address",
                             },
                           })}
-                          className={`border border-black h-12 rounded-lg text-black px-3 font-quickSand font-semibold text-sm ${
-                            errors.email ? "border-red-500" : ""
-                          }`}
+                          className={`border border-black h-12 rounded-lg text-black px-3 font-quickSand font-semibold text-sm ${errors.email ? "border-red-500" : ""
+                            }`}
                         />
                         {errors.email && (
                           <p className="text-red font-semibold font-lato text-xs mt-2">
@@ -302,17 +362,17 @@ const Signup = () => {
                         {process ? (
                           <button
                             type="button"
-                            class="bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto inline-flex items-center"
+                            className="bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto inline-flex items-center"
                             disabled
                           >
                             <svg
-                              class="animate-spin h-5 w-5 mr-3 text-white"
+                              className="animate-spin h-5 w-5 mr-3 text-white"
                               xmlns="http://www.w3.org/2000/svg"
                               fill="none"
                               viewBox="0 0 24 24"
                             >
                               <circle
-                                class="opacity-25"
+                                className="opacity-25"
                                 cx="12"
                                 cy="12"
                                 r="10"
@@ -320,7 +380,7 @@ const Signup = () => {
                                 stroke-width="4"
                               ></circle>
                               <path
-                                class="opacity-75"
+                                className="opacity-75"
                                 fill="currentColor"
                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                               ></path>
@@ -345,9 +405,8 @@ const Signup = () => {
                           {...register("companyName", {
                             required: "Company Name is required",
                           })}
-                          className={`border border-black h-12 rounded-lg text-black px-3 font-quickSand font-semibold text-sm ${
-                            errors.companyName ? "border-red-500" : ""
-                          }`}
+                          className={`border border-black h-12 rounded-lg text-black px-3 font-quickSand font-semibold text-sm ${errors.companyName ? "border-red-500" : ""
+                            }`}
                         />
                         {errors.companyName && (
                           <p className="text-red font-semibold font-lato text-xs mt-2">
@@ -363,9 +422,8 @@ const Signup = () => {
                           {...register("companyAddress", {
                             required: "Company Address is required",
                           })}
-                          className={`border border-black h-12 rounded-lg text-black px-3 font-quickSand font-semibold text-sm p-2 ${
-                            errors.companyAddress ? "border-red-500" : ""
-                          }`}
+                          className={`border border-black h-12 rounded-lg text-black px-3 font-quickSand font-semibold text-sm p-2 ${errors.companyAddress ? "border-red-500" : ""
+                            }`}
                         />
                         {errors.companyAddress && (
                           <p className="text-red font-semibold font-lato text-xs mt-2">
@@ -375,7 +433,7 @@ const Signup = () => {
                       </div>
                       <div className="mt-2 flex flex-col gap-2">
                         <p className="text-black font-bold font-quickSand text-base">
-                          *Phone Number
+                          *WhatsApp Number
                         </p>
                         <Controller
                           name="phone"
@@ -395,7 +453,7 @@ const Signup = () => {
                               name={name}
                               value={value}
                               onChange={onChange}
-                              inputClass="!rounded-lg !text-black !font-quickSand !font-semibold !text-sm"
+                              inputclassName="!rounded-lg !text-black !font-quickSand !font-semibold !text-sm"
                               inputStyle={{
                                 width: "100%",
                                 maxWidth: "100%",
@@ -403,7 +461,7 @@ const Signup = () => {
                                 border: "solid 1px #23272D",
                               }}
                               country={"in"}
-                              // onChange={(e) => handlePhoneChange(e)}
+                            // onChange={(e) => handlePhoneChange(e)}
                             />
                           )}
                           control={control}

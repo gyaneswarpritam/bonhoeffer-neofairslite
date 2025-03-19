@@ -103,3 +103,7 @@ body {
   background: transparent;
   z-index: 10; /* Ensure it stays above the iframe */
 }
+.swiper-slide {
+  width: auto !important;
+  flex: 1 0 auto;
+}

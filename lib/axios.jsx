@@ -7,7 +7,7 @@ const client = axios.create({
 });
 
 export const request = ({ ...options }) => {
-  const bearerToken = sessionStorage.getItem("token");
+  const bearerToken = localStorage.getItem("token");
   client.defaults.headers["Authorization"] = bearerToken;
   const onSuccess = (response) => response.data.data;
   // const onError = (error) => error.response.data.message;
@@ -29,9 +29,36 @@ export const request = ({ ...options }) => {
 
   return client(options).then(onSuccess).catch(onError);
 };
+export const requestWithStatus = ({ ...options }) => {
+  const bearerToken = localStorage.getItem("token");
+  client.defaults.headers["Authorization"] = bearerToken;
+  const onSuccess = (response) => ({
+    status: response.status,
+    data: response.data.data,
+    message: response.data.message,
+  });
+  // const onError = (error) => error.response.data.message;
+  const onError = (error) => {
+    // If there's no response from the server (e.g., network error)
+    if (!error?.response) {
+      return {
+        success: false,
+        message: "Network Error: Please check your connection.",
+      };
+    }
+    // If the server responded with an error, return the error data
+    return {
+      success: false,
+      message: error.response.data?.message || "An error occurred.",
+      status: error.response.status,
+    };
+  };
+
+  return client(options).then(onSuccess).catch(onError);
+};
 
 export const requestObject = ({ ...options }) => {
-  const bearerToken = sessionStorage.getItem("token");
+  const bearerToken = localStorage.getItem("token");
   client.defaults.headers["Authorization"] = bearerToken;
   const onSuccess = (response) => response;
   const onError = (error) => {
@@ -42,7 +69,7 @@ export const requestObject = ({ ...options }) => {
 };
 
 export const requestWithCount = ({ ...options }) => {
-  const bearerToken = sessionStorage.getItem("token");
+  const bearerToken = localStorage.getItem("token");
   client.defaults.headers["Authorization"] = bearerToken;
   const onSuccess = (response) => {
     const { data, totalCount, totalPages } = response.data;

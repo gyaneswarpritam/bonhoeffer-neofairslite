@@ -4,7 +4,7 @@ import { BUCKET_URL } from "@/config/constant";
 import { request } from "@/lib/axios";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
-import React, { useState } from "react";
+import React from "react";
 import { useForm } from "react-hook-form";
 
 export default function Auditorium() {

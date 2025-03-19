@@ -7,7 +7,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { BUCKET_URL } from "@/config/constant";
 
-const ConfirmModel = ({ meetingId, handleClick, instantMeetingData }) => {
+const ConfirmModel = ({ meetingId, handleClick, instantMeetingData, handleClose }) => {
   const router = useRouter();
   const fetchInstantMeetingData = async () => {
     return request({
@@ -30,7 +30,7 @@ const ConfirmModel = ({ meetingId, handleClick, instantMeetingData }) => {
 
   if (instantMeeting) {
     if (instantMeeting && instantMeeting.length > 0) {
-      handleClick();
+      handleClose();
       router.push(`/visitor/video-chat?id=${instantMeeting[0]._id}`);
     }
   }
@@ -55,8 +55,8 @@ const ConfirmModel = ({ meetingId, handleClick, instantMeetingData }) => {
       >
         <div className="w-full h-full flex flex-col gap-5">
           {instantMeetingData &&
-          instantMeetingData[0] &&
-          instantMeetingData[0]?.rejected ? (
+            instantMeetingData[0] &&
+            instantMeetingData[0]?.rejected ? (
             <h2>
               The request declined by exhibitor. Please try after sometime.
             </h2>

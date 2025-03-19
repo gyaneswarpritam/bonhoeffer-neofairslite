@@ -20,40 +20,15 @@ import MostLikedPie from "@/components/exibitor/most-liked-pie";
 import MostReviewedPie from "@/components/exibitor/most-reviewed-pie";
 import MostViewedPie from "@/components/exibitor/most-viewed-pie";
 import { mostViewedCatalogDef } from "@/components/tableColumnDef/mostViewedCatalogDef";
-import MessageModel from "@/components/messageModel";
-import moment from "moment-timezone";
 
 export default function Home() {
   const dispatch = useDispatch();
   const router = useRouter();
   const { showEntry } = useSelector((state) => state.commonStore);
   const exhibitorId =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
   const [visitorData, setVisitorData] = useState(null);
-  const [messageModelOpen, setMessageModelOpen] = useState(false);
-  const [messageBody, setMessageBody] = useState(false);
   const [catalogTitle, setCatalogTitle] = useState(false);
-
-  const handleCloseMessage = () => {
-    setMessageModelOpen(false);
-  };
-
-  const getTodayDate = () => {
-    const today = new Date();
-    return today.toISOString().split("T")[0]; // Returns 'YYYY-MM-DD'
-  };
-
-  const fetchbookedSlots = async () => {
-    const todayDate = getTodayDate();
-    return await request({
-      url: `exhibitor/list-booked-slots?exhibitorId=${exhibitorId}&date=${todayDate}`,
-      method: "get",
-    });
-  };
-  const { data: bookedSlots } = useQuery({
-    queryKey: ["bookedSlots"],
-    queryFn: fetchbookedSlots,
-  });
 
   const fetchSettings = async () => {
     return request({ url: "visitor/settings", method: "get" });
@@ -87,6 +62,19 @@ export default function Home() {
     queryKey: ["visitedStalls"],
     queryFn: fetchVisitedStall,
   });
+
+  // Fetch stall Id data
+  const fetchStallId = async () => {
+    return request({
+      url: `exhibitor/stall-id-by-exhibitor/${exhibitorId}`,
+      method: "get",
+    });
+  };
+  const { data: stallData } = useQuery({
+    queryKey: ["stallId"],
+    queryFn: fetchStallId,
+  });
+
   // Fetch visitedStall data
   const fetchLiveStallVisitors = async () => {
     return request({
@@ -95,7 +83,7 @@ export default function Home() {
     });
   };
   const { data: liveStallVisitors } = useQuery({
-    queryKey: ["visitedStalls"],
+    queryKey: ["liveStallVisitors"],
     queryFn: fetchLiveStallVisitors,
   });
   // Fetch Requested Catalouge data
@@ -110,6 +98,58 @@ export default function Home() {
     queryKey: ["catalougeData"],
     queryFn: fetchCatalougeData,
     refetchOnWindowFocus: true,
+  });
+
+  // Fetch visitor data by most viewed
+  const fetchAllMostViewedData = async () => {
+    return request({
+      url: `exhibitor/visitor-by-product`,
+      method: "post",
+      data: {
+        stallId: stallData?.stallId
+      }
+    });
+  };
+
+  const { data: mostViewedData } = useQuery({
+    queryKey: ["most-viewed-all"],
+    queryFn: fetchAllMostViewedData,
+    enabled: !!stallData?.stallId,
+  });
+
+  // Fetch visitedStall data
+  const fetchAllLikesData = async () => {
+    return request({
+      url: `exhibitor/visitor-by-liked`,
+      method: "post",
+      data: {
+        stallId: stallData?.stallId
+      }
+    });
+  };
+
+  const { data: likeAllData } = useQuery({
+    queryKey: ["most-liked-all"],
+    queryFn: fetchAllLikesData,
+    enabled: !!stallData?.stallId,
+  });
+
+
+  // Fetch review data
+  const fetchAllReviewsData = async () => {
+    return request({
+      url: `exhibitor/visitor-by-reviewed`,
+      method: "post",
+      data: {
+        stallId: stallData?.stallId
+      }
+    });
+  };
+
+  const { data: reviewAllData } = useQuery({
+    queryKey: ["most-reviewed-all"], // Ensure the queryKey is unique
+    queryFn: fetchAllReviewsData,
+    enabled: !!stallData?.stallId,
   });
 
   const [tableOpen, setTableOpen] = useState(false);
@@ -178,92 +218,14 @@ export default function Home() {
     dispatch(toggleNavbar(true));
   }, []);
 
-  useEffect(() => {
-    checkForUpcomingMeetings();
-  }, [bookedSlots]);
-
-  const checkForUpcomingMeetings = () => {
-    if (bookedSlots && bookedSlots.length) {
-      const notifiedMeetings = {}; // Track notifications for each slot
-
-      const intervalId = setInterval(() => {
-        const now = new Date();
-
-        bookedSlots.forEach((slot) => {
-          // Combine Date and Time fields from the slot and parse the timezone
-          const meetingDateTime = `${slot.Date} ${slot.Time.replace(
-            " PM",
-            "PM"
-          ).replace(" AM", "AM")}`;
-          const meetingTime = moment
-            .tz(meetingDateTime, "YYYY-MM-DD hh:mm A", slot.Timezone)
-            .toDate();
-
-          const timeDiff = meetingTime - now;
-
-          // If the meeting is 'booked' and still has time
-          if (timeDiff > 0 && slot.Status === "booked") {
-            const minutesLeft = Math.floor(timeDiff / (1000 * 60)); // Convert to minutes
-
-            // Notify at 30 minutes if not already notified for this slot
-            if (
-              minutesLeft <= 30 &&
-              minutesLeft > 15 &&
-              !notifiedMeetings[slot.SerialNo]?.notifiedAt30
-            ) {
-              setMessageModelOpen(true);
-              setMessageBody(
-                `Meeting ${slot?.TimeRange} starts in ${minutesLeft} minutes, please be available.`
-              );
-
-              // Mark as notified for the 30-minute mark
-              notifiedMeetings[slot.SerialNo] = {
-                ...notifiedMeetings[slot.SerialNo],
-                notifiedAt30: true,
-              };
-            }
-
-            // Notify at 15 minutes if not already notified for this slot
-            if (
-              minutesLeft <= 15 &&
-              !notifiedMeetings[slot.SerialNo]?.notifiedAt15
-            ) {
-              setMessageModelOpen(true);
-              setMessageBody(
-                `Meeting starts in ${minutesLeft} minutes, please be available.`
-              );
-
-              // Mark as notified for the 15-minute mark
-              notifiedMeetings[slot.SerialNo] = {
-                ...notifiedMeetings[slot.SerialNo],
-                notifiedAt15: true,
-              };
-            }
-
-            // Clear the interval if both notifications have been sent for the slot
-            if (
-              notifiedMeetings[slot.SerialNo]?.notifiedAt30 &&
-              notifiedMeetings[slot.SerialNo]?.notifiedAt15
-            ) {
-              clearInterval(intervalId);
-            }
-          }
-        });
-      }, 60 * 1000); // Check every minute
-    }
+  const showAllData = (data) => {
+    setVisitorData(data.data);
+    setCatalogTitle(data.title);
+    setCatalogAnalyticsTableOpen(true);
   };
 
   return (
     <>
-      {messageModelOpen ? (
-        <MessageModel
-          handleClose={handleCloseMessage}
-          messageHeader={`Meeting Notification`}
-          messageBody={messageBody}
-        />
-      ) : (
-        ""
-      )}
       {showEntry ? (
         <div
           style={{
@@ -319,7 +281,7 @@ export default function Home() {
             <div
               className="md:w-1/2 w-full flex flex-row gap-3 justify-start items-center bg-[#ECFEEF] rounded-tl-xl 
               rounded-tr-xl md:rounded-tr-none md:rounded-bl-xl  px-5 py-6 "
-              // onClick={handleLiveStallTable}
+            // onClick={handleLiveStallTable}
             >
               <Image
                 src={`${BUCKET_URL}/stall.svg`}
@@ -429,25 +391,38 @@ export default function Home() {
                 </p>
                 <div className=" flex md:flex-row flex-wrap justify-around items-start">
                   <div className=" w-full max-w-[240px] flex flex-col">
-                    <p className=" text-base font-lato font-bold text-center">
-                      Most Viewed
-                    </p>
+                    <div >
+                      <p className=" text-base font-lato font-bold text-center">
+                        Most Viewed
+                      </p>
+                      <p className="cursor-pointer to-blue underline font-lato font-bold text-center  text-xs"
+                        onClick={() => showAllData({ title: "Most Viewed", data: mostViewedData })}>View All</p>
+                    </div>
+
                     <div className=" relative">
                       <MostViewedPie onVisitorDataFetch={handleVisitorData} />
                     </div>
                   </div>
                   <div className=" w-full max-w-[240px]  flex flex-col">
-                    <p className=" text-base font-lato font-bold text-center">
-                      Most Liked
-                    </p>
+                    <div >
+                      <p className=" text-base font-lato font-bold text-center">
+                        Most Liked
+                      </p>
+                      <p className="cursor-pointer to-blue underline font-lato font-bold text-center  text-xs"
+                        onClick={() => showAllData({ title: "Most Liked", data: likeAllData })}>View All</p>
+                    </div>
                     <div className=" relative">
                       <MostLikedPie onVisitorDataFetch={handleVisitorData} />
                     </div>
                   </div>
                   <div className=" w-full max-w-[240px]  flex flex-col">
-                    <p className=" text-base font-lato font-bold text-center">
-                      Most Reviewed
-                    </p>
+                    <div >
+                      <p className=" text-base font-lato font-bold text-center">
+                        Most Reviewed
+                      </p>
+                      <p className="cursor-pointer to-blue underline font-lato font-bold text-center text-xs"
+                        onClick={() => showAllData({ title: "Most Reviewed", data: reviewAllData })}>View All</p>
+                    </div>
                     <div className=" relative">
                       <MostReviewedPie onVisitorDataFetch={handleVisitorData} />
                     </div>

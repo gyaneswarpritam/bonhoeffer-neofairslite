@@ -183,6 +183,31 @@ const SocialMedia = ({ setDataObject, dataObject }) => {
       <div className=" relative flex items-center">
         <Image
           alt="img"
+          src={`${BUCKET_URL}/stalls/input-instagram.svg`}
+          height={3000}
+          width={3000}
+          className="w-auto h-6 absolute ml-2"
+        ></Image>
+        <input
+          id="Instagram"
+          className=" w-full text-sm font-quickSand font-semibold h-10 rounded-lg bg-[#F2F2F2] px-3 social-media-input"
+          type="text"
+          placeholder="Instagram"
+          value={dataObject.social_media.instagram}
+          onChange={(e) =>
+            setDataObject({
+              ...dataObject,
+              social_media: {
+                ...dataObject.social_media,
+                instagram: e.target.value,
+              },
+            })
+          }
+        />
+      </div>
+      <div className=" relative flex items-center">
+        <Image
+          alt="img"
           src={`${BUCKET_URL}/stalls/website.svg`}
           height={3000}
           width={3000}

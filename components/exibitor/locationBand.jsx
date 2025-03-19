@@ -12,7 +12,7 @@ import dayjs from "dayjs";
 
 function LocationBand() {
   const exhibitorId =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
   const fetchNotification = async () => {
     return request({
       url: `exhibitor/notification/${exhibitorId}`,

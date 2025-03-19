@@ -7,7 +7,7 @@ const VideoModal = ({ title, videoUrl, handleModelClose }) => {
     <div className="w-full h-[100%] bg-[#000000af] fixed left-0 right-0 top-0 bottom-0 z-[1000]">
       <div className=" rounded-[32px] relative overflow-hidden h-full bg-white">
         <div className=" headerDiv absolute z-50 top-0 w-full h-fit md:h-20 flex flex-col gap-5 md:flex-row justify-between items-start md:items-center bg-[#222222] text-white text-lg font-lato px-8 py-5 md:py-0">
-          <p className=" header text-2xl font-lato font-bold text-center">
+          <p className=" header md:text-2xl sm:text-xl font-lato font-bold text-center">
             {title}
           </p>
           <div className=" flex flex-row gap-3 justify-center items-center">

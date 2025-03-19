@@ -9,7 +9,7 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function MostLikedPie({ onVisitorDataFetch }) {
   const exhibitorId =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
 
   // Fetch visitedStall data
   const fetchLikesData = async () => {

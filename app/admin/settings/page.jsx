@@ -8,6 +8,7 @@ import { request } from "@/lib/axios";
 import { getTimezonesWithGMT } from "@/lib/timezones";
 import "react-quill/dist/quill.snow.css";
 import MeetingConfig from "@/components/admin/MeetingConfig";
+import { toast } from "react-toastify";
 
 // Dynamically import ReactQuill for client-side rendering only
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });

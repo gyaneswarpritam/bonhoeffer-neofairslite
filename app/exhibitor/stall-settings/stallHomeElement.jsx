@@ -8,7 +8,7 @@ import { BUCKET_URL } from "@/config/constant";
 
 const CreateStallWiget = (onButtonClick) => {
   const exhibitorId =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
 
   const fetchStall = async () => {
     return request({

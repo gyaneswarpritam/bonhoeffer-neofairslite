@@ -1,21 +1,15 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { AgGridReact } from "ag-grid-react";
-
-import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
-import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import { breifcaseModel } from "@/models/data";
 import Image from "next/image";
 import "./model.css";
 import { useDispatch, useSelector } from "react-redux";
-
-import Link from "next/link";
-import YouTubePlayer from "./youtubeComp";
 import { modelClose } from "@/GlobalRedux/features/dialogs/dialogSlice";
 import PdfModal from "./PdfModal";
 import VideoModal from "./VideoModal";
 import { BUCKET_URL } from "@/config/constant";
 import StarRatingComponent from "react-star-rating-component";
+import CommonDataTableView from "./grid/CommonDataTableView";
 
 const Model = ({ productdata, profiledata, videodata }) => {
   const [rowData, setRowData] = useState([]);
@@ -81,14 +75,14 @@ const Model = ({ productdata, profiledata, videodata }) => {
       field: "file",
       filter: true,
       width: 100,
-      cellRenderer: (params) => {
+      renderCell: (params) => {
         return (
           <Image
             alt="pdf file"
             width={200}
             height={200}
             src={`${BUCKET_URL}/PDF_file_icon.svg`}
-            className="h-auto w-5 mx-auto my-auto cursor-pointer"
+            className="h-auto w-5 my-auto cursor-pointer"
             onClick={() => imageclick(params)}
           />
         );
@@ -99,7 +93,7 @@ const Model = ({ productdata, profiledata, videodata }) => {
     {
       headerName: "Age",
       field: "age",
-      cellRenderer: (params) => {
+      renderCell: (params) => {
         const value = briefcasedata[params.rowIndex].file;
         return (
           <div>
@@ -141,14 +135,14 @@ const Model = ({ productdata, profiledata, videodata }) => {
       field: "url",
       filter: true,
       width: 100,
-      cellRenderer: (params) => {
+      renderCell: (params) => {
         return (
           <Image
             alt="pdf file"
             width={200}
             height={200}
             src={`${BUCKET_URL}/PDF_file_icon.svg`}
-            className="h-auto w-5 mx-auto my-auto cursor-pointer"
+            className="h-auto w-5 my-auto cursor-pointer mt-3"
             onClick={() => imageclick(params.value)}
           />
         );
@@ -159,19 +153,19 @@ const Model = ({ productdata, profiledata, videodata }) => {
     {
       headerName: "Like",
       field: "liked",
-      cellRenderer: (params) => {
+      renderCell: (params) => {
         return (
-          <>
+          <div className="flex">
             <Image
               alt="Likes"
               src={`${BUCKET_URL}/stalls/like.svg`}
-              height={200}
-              width={200}
-              className=" w-5 h-auto cursor-pointer"
+              height={40}
+              width={40}
+              className=" w-5 h-auto cursor-pointer mt-3"
               unoptimized
             ></Image>
-            ({params.data.like})
-          </>
+            ({params.row.like})
+          </div>
         );
       },
       flex: 2,
@@ -180,18 +174,18 @@ const Model = ({ productdata, profiledata, videodata }) => {
     {
       headerName: "Review",
       field: "review",
-      cellRenderer: (params) => {
+      renderCell: (params) => {
         return (
-          <>
+          <div className="flex">
             <StarRatingComponent
-              name={params.data._id}
+              name={params.row._id}
               value={params.value || 0}
               starCount={5}
               starColor={"#ffb400"}
               emptyStarColor={"#ccc"}
             />
-            ({params.data.reviewVisitors})
-          </>
+            ({params.row.reviewVisitors})
+          </div>
         );
       },
       flex: 2,
@@ -213,14 +207,14 @@ const Model = ({ productdata, profiledata, videodata }) => {
       field: "url",
       filter: true,
       width: 100,
-      cellRenderer: (params) => {
+      renderCell: (params) => {
         return (
           <Image
             alt="pdf file"
             width={200}
             height={200}
             src={`${BUCKET_URL}/PDF_file_icon.svg`}
-            className="h-auto w-5 mx-auto my-auto cursor-pointer"
+            className="h-auto w-5 my-auto cursor-pointer"
             onClick={() => imageclick(params.value)}
           />
         );
@@ -244,7 +238,7 @@ const Model = ({ productdata, profiledata, videodata }) => {
       field: "url",
       filter: true,
       width: 100,
-      cellRenderer: (params) => {
+      renderCell: (params) => {
         return (
           <Image
             alt="pdf file"
@@ -264,7 +258,7 @@ const Model = ({ productdata, profiledata, videodata }) => {
 
   useEffect(() => {
     switch (dialogName) {
-      case "breifcase":
+      case "briefcase":
         SetHeaderName("BriefCase");
         setRowData(briefcasedata);
         setColumnDefs(briefcaseColumnDef);
@@ -291,8 +285,8 @@ const Model = ({ productdata, profiledata, videodata }) => {
   return (
     <>
       <div className="w-full h-[100%] bg-white fixed left-0 right-0 top-0 bottom-0 z-[400] mx-auto my-auto flex flex-col justify-center items-start">
-        <div className=" headerDiv w-full h-20 flex justify-between items-center bg-[#222222] text-white text-lg font-lato  px-8">
-          <p className=" header text-2xl font-lato font-bold">{headerName}</p>
+        <div className=" headerDiv w-full md:h-20 sm:h-14 mb-1 flex justify-between items-center bg-[#222222] text-white text-lg font-lato  px-8">
+          <p className=" header md:text-2xl sm:text-xl font-lato font-bold">{headerName}</p>
           <div
             onClick={() => handleModelClose()}
             className=" w-6 h-6 p-2 rounded-full bg-brand-color cursor-pointer"
@@ -307,13 +301,12 @@ const Model = ({ productdata, profiledata, videodata }) => {
             ></Image>
           </div>
         </div>
-        <div className="ag-theme-alpine h-full gridContainer w-full ">
-          <AgGridReact
+        <div className="ag-theme-alpine h-full gridContainer w-full overflow-y-scroll px-4">
+          <CommonDataTableView
+            columns={columnDefs}
             rowData={rowData}
-            columnDefs={columnDefs}
-            rowHeight={50}
-            autoSizeColumns={true}
-          ></AgGridReact>
+            filename={""}
+          />
         </div>
       </div>
       {openPdf ? (

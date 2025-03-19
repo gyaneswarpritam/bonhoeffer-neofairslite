@@ -4,34 +4,32 @@ import { Tab, Tabs, TabList, TabPanel } from "react-tabs";
 import "./Chatview.css";
 import List from "./list";
 import { io } from "socket.io-client";
-import { BASE_URL, SOCKET_HOST } from "@/config/constant";
-import { isMobile, isTablet, isDesktop } from "react-device-detect";
+import { BASE_URL, BUCKET_URL, SOCKET_HOST } from "@/config/constant";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { useQuery } from "@tanstack/react-query";
 import { request } from "@/lib/axios";
-import ChatContainer from "./ChatContainer";
 import Welcome from "./Welcome";
 import axios from "axios";
 import ExhibitorChatContainer from "./ExhibitorChatContainer";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import Image from "next/image";
 
 const Chatview = ({ handleClose, exhibitorId }) => {
   const visitorId =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
   const socket = useRef();
 
   const [activeList, setActiveList] = useState(0);
-  const [device, setDevice] = useState("mobile");
   const [screen, setScreen] = useState("list");
   const [name, setName] = useState("Exhibitors");
-
   const [displaydata, setData] = useState(null);
   const [displayName, setDisplayName] = useState("");
   const [listNumber, setListNumber] = useState(0);
-
   const [currentChat, setCurrentChat] = useState(undefined);
   const [currentUser, setCurrentUser] = useState(undefined);
   const [currentExhibitorChat, setCurrentExhibitorChat] = useState(undefined);
+  const [isMobileView, setIsMobileView] = useState(false);
 
   const fetchExhibitor = async () => {
     return request({
@@ -44,18 +42,6 @@ const Chatview = ({ handleClose, exhibitorId }) => {
     queryKey: ["exhibitorList"],
     queryFn: fetchExhibitor,
   });
-
-  // const fetchChatUser = async () => {
-  //   return request({
-  //     url: `messages/getChatUser/${visitorId}`,
-  //     method: "get",
-  //   });
-  // };
-
-  // const { data: chatUsers, refetch: refetchVisitor } = useQuery({
-  //   queryKey: ["getChatUserList"],
-  //   queryFn: fetchChatUser,
-  // });
 
   const fetchChatExhibitor = async () => {
     return request({
@@ -70,6 +56,18 @@ const Chatview = ({ handleClose, exhibitorId }) => {
     refetchInterval: 5000,
   });
 
+  const fetchVisitor = async () => {
+    return request({
+      url: `visitor/visitorChatList/${exhibitorId}`,
+      method: "get",
+    });
+  };
+
+  const { data: visitorData, refetch: refetchVisitor } = useQuery({
+    queryKey: ["visitorList"],
+    queryFn: fetchVisitor,
+  });
+
   useEffect(() => {
     if (visitorId) setCurrentUser(visitorId);
   }, []);
@@ -81,57 +79,25 @@ const Chatview = ({ handleClose, exhibitorId }) => {
     }
   }, [currentUser]);
 
-  const handleListClick = (e) => {
-    setActiveList(e);
-  };
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth < 768);
+    };
 
-  const handleListClickMobile = (value) => {
-    setActiveList(value._id);
-    const fullName = `${value.companyName}(${value.name} )`;
-    setDisplayName(fullName);
-    setScreen("message");
-    setCurrentChat(value);
-    markMessagesAsRead(currentUser, value._id);
-  };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleListClickExhibitor = (value) => {
     setActiveList(value._id);
-    const fullName = `${value.companyName}(${value.name} )`;
+    const fullName = `${value.companyName}(${value.name})`;
     setDisplayName(fullName);
     setScreen("message");
     setCurrentExhibitorChat(value);
-    markMessagesAsReadExhibitor(currentUser, value._id);
-  };
-
-  const handleTabChange = (e, value) => {
-    setName(value);
-    setDisplayName("");
   };
 
   const handleSendMsg = async (currentChat) => {
-    const chatExist = await axios.post(
-      `${BASE_URL}messages/checkChatUserExist`,
-      {
-        from: currentUser,
-        to: currentChat._id,
-      }
-    );
-    if (chatExist.data.status === 0) {
-      socket.current.emit("send-msg", {
-        to: currentChat._id,
-        from: currentUser,
-        msg: "Hello",
-      });
-      await axios.post(`${BASE_URL}messages/addmsg`, {
-        from: currentUser,
-        to: currentChat._id,
-        message: "Hello",
-      });
-      refetchVisitor(); // Refetch visitor data after sending message
-    }
-  };
-
-  const handleSendExhibitorMsg = async (currentChat) => {
     const chatExist = await axios.post(
       `${BASE_URL}exhibitor-messages/checkChatUserExist`,
       {
@@ -150,99 +116,119 @@ const Chatview = ({ handleClose, exhibitorId }) => {
         to: currentChat._id,
         message: "Hello",
       });
-      // refetchExhibitor(); // Refetch Exhibitor data after sending message
+      refetchVisitor(); // Refetch visitor list to update lastMessage
     }
-  };
-
-  const markMessagesAsRead = async (from, to) => {
-    await axios.post(`${BASE_URL}messages/markMessagesAsRead`, { from, to });
-    refetchVisitor();
-  };
-  const markMessagesAsReadExhibitor = async (from, to) => {
-    await axios.post(`${BASE_URL}exhibitor-messages/markMessagesAsRead`, {
-      from,
-      to,
-    });
-    // refetchExhibitor();
   };
 
   return (
     <div
-      className={` ${isMobile && "w-full h-full"} ${
-        isDesktop && "w-[100%] h-[90%] max-h-[710px] rounded-2xl"
-      } fixed max-w-6xl bg-white m-auto flex flex-row z-[1000]`}
+      className="fixed max-w-6xl bg-white m-auto flex flex-row z-[1000] w-full h-full md:w-[100%] md:h-[90%] md:max-h-[710px] md:rounded-2xl"
     >
-      {isDesktop && (
-        <>
-          <div className="w-full max-w-[25%] min-w-[295px] border-r h-full">
-            <Tabs selectedIndex={listNumber} className="flex flex-col">
-              <TabList className="w-full font-lato text-base font-medium">
-                <div className="border-b ml-5 pr-4 flex flex-row justify-between gap-2 pb-1 h-12">
-                  <Tab
-                    onClick={(e) => {
-                      setActiveList(0);
-                      setListNumber(0);
-                      handleTabChange(e, "Exhibitors");
-                    }}
-                    className="px-3 rounded-full cursor-pointer h-10 flex justify-center items-center"
-                  >
-                    Exhibitors
-                  </Tab>
-                  {/* <Tab
-                    onClick={(e) => {
-                      setActiveList(0);
-                      setListNumber(1);
-                      handleTabChange(e, "Visitors");
-                    }}
-                    className="px-3 rounded-full cursor-pointer h-10 flex justify-center items-center"
-                  >
-                    Visitors
-                  </Tab> */}
-                </div>
-              </TabList>
-              <TabPanel>
-                {exhibitorData && (
-                  <Autocomplete
-                    disablePortal
-                    options={exhibitorData}
-                    sx={{ width: 295 }}
-                    getOptionLabel={(option) =>
-                      `${option.companyName} (${option.name} )`
-                    }
-                    renderInput={(params) => (
-                      <TextField {...params} label="Search Exhibitor" />
-                    )}
-                    style={{ paddingTop: 10 }}
-                    onChange={(event, newValue) => {
-                      handleSendExhibitorMsg(newValue);
-                    }}
+      {/* List Section */}
+      <div
+        className={`h-full border-r ${isMobileView ? (screen === "list" ? "w-full" : "hidden") : "w-[25%] min-w-[295px]"
+          }`}
+      >
+        <Tabs selectedIndex={listNumber} className="flex flex-col">
+          <TabList className="w-full font-lato text-base font-medium">
+            <div className="border-b ml-5 pr-4 flex flex-row justify-between gap-2 pb-1 h-12">
+              <Tab
+                onClick={() => {
+                  setActiveList(0);
+                  setListNumber(0);
+                  setName("Exhibitors");
+                  setDisplayName("");
+                }}
+                className="px-3 rounded-full cursor-pointer h-10 flex justify-center items-center"
+              >
+                Exhibitors
+              </Tab>
+              {isMobileView ?
+                <div
+                  className="bg-brand-color w-8 aspect-square h-auto rounded-full flex justify-center items-center cursor-pointer"
+                  onClick={handleClose}
+                >
+                  <Image
+                    src={`${BUCKET_URL}/chat/close.svg`}
+                    width={3000}
+                    height={3000}
+                    className="w-4 aspect-square h-auto"
                   />
+                </div> : <></>}
+            </div>
+          </TabList>
+          <TabPanel>
+            {exhibitorData && (
+              <Autocomplete
+                disablePortal
+                options={exhibitorData}
+
+                getOptionLabel={(option) =>
+                  `${option.companyName} (${option.name})`
+                }
+                renderInput={(params) => (
+                  <TextField {...params} label="Search Exhibitor" />
                 )}
-                {chatExhibitor &&
-                  chatExhibitor.map((item) => (
-                    <List
-                      key={item._id}
-                      data={item}
-                      listId={item._id}
-                      active={activeList}
-                      onclick={handleListClickExhibitor}
-                    ></List>
-                  ))}
-              </TabPanel>
-            </Tabs>
+                style={{ paddingTop: 10 }}
+                onChange={(event, newValue) => {
+                  handleSendMsg(newValue);
+                }}
+              />
+            )}
+            {chatExhibitor &&
+              chatExhibitor.map((item) => (
+                <List
+                  key={item._id}
+                  data={item}
+                  listId={item._id}
+                  active={activeList}
+                  onclick={handleListClickExhibitor}
+                />
+              ))}
+          </TabPanel>
+        </Tabs>
+      </div>
+
+      {/* Chat Section */}
+      <div
+        className={`h-full flex flex-col ${isMobileView ? (screen === "message" ? "w-full" : "hidden") : "w-[75%]"
+          }`}
+      >
+        {isMobileView && screen === "message" ? (
+          <div className="flex border-b">
+            <div
+              className="flex items-center p-3 bg-gray-100 cursor-pointer"
+              onClick={() => setScreen("list")}
+            >
+              <ArrowBackIcon />
+              <span className="ml-2">Back</span>
+            </div>
+            <div className="pl-5 mr-5 min-h-[48px] flex items-center justify-between ">
+              <h1 className="text-sm font-bold font-lato">
+                {displayName !== "Groups" ? (displayName === "" ? "" : `Chat With ${displayName}`) : displayName}
+              </h1>
+            </div>
           </div>
-          {displayName === "" && <Welcome handleClose={handleClose} />}
-          {displayName && name === "Exhibitors" && (
-            <ExhibitorChatContainer
-              displayName={displayName}
-              displaydata={displaydata}
-              currentChat={currentExhibitorChat}
-              socket={socket}
-              handleClose={handleClose}
-            />
-          )}
-        </>
-      )}
+
+        ) :
+          <div className="pl-5 mr-5 min-h-[48px] flex items-center justify-between border-b">
+            <h1 className="text-xl font-bold font-lato">
+              {displayName !== "Groups" ? (displayName === "" ? "" : `Chat With ${displayName}`) : displayName}
+            </h1>
+          </div>
+        }
+
+        {displayName === "" && <Welcome handleClose={handleClose} />}
+        {displayName && name === "Exhibitors" && (
+          <ExhibitorChatContainer
+            displayName={displayName}
+            displaydata={displaydata}
+            currentChat={currentExhibitorChat}
+            socket={socket}
+            handleClose={handleClose}
+          />
+        )}
+      </div>
     </div>
   );
 };

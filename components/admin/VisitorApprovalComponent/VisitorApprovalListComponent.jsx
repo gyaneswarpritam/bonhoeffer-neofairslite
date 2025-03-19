@@ -3,9 +3,9 @@ import { request } from "@/lib/axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import React, { useState } from "react";
-import TableMain from "../tableMain";
 import { useForm } from "react-hook-form";
 import { BUCKET_URL } from "@/config/constant";
+import CommonDataTable from "@/components/grid/CommonDataTable";
 
 const VisitorApprovalListComponent = ({ status }) => {
   const [modelOpen, setModelOpen] = useState(false);
@@ -26,18 +26,16 @@ const VisitorApprovalListComponent = ({ status }) => {
       {
         headerName: "Name",
         field: "name",
-        filter: true,
         width: 150,
       },
-      { headerName: "Company", field: "companyName", filter: true, width: 150 },
-      { headerName: "Email", field: "email", filter: true, width: 250 },
-      { headerName: "Phone", field: "phone", filter: true, width: 150 },
+      { headerName: "Company", field: "companyName", width: 150 },
+      { headerName: "Email", field: "email", width: 250 },
+      { headerName: "Phone", field: "phone", width: 150 },
       // {
       //   headerName: "View",
       //   field: "isView",
-      //   filter: true,
-      //   width: 130,
-      //   cellRenderer: (params) => {
+      //         //   width: 130,
+      //   renderCell: (params) => {
       //     return (
       //       <div className="flex flex-col items-start justify-center h-full">
       //         <Image
@@ -56,13 +54,12 @@ const VisitorApprovalListComponent = ({ status }) => {
       // },
       {
         field: "Block",
-        filter: true,
         width: 130,
-        cellRenderer: (params) => {
+        renderCell: (params) => {
           return (
             <div className="flex flex-col items-start justify-center h-full">
               <Image
-                onClick={() => blockVisitor(params.data._id)}
+                onClick={() => blockVisitor(params.row._id)}
                 alt="block_icon"
                 width={100}
                 height={100}
@@ -79,18 +76,16 @@ const VisitorApprovalListComponent = ({ status }) => {
       {
         headerName: "Name",
         field: "name",
-        filter: true,
         width: 150,
       },
-      { headerName: "Company", field: "companyName", filter: true, width: 150 },
-      { headerName: "Email", field: "email", filter: true, width: 250 },
-      { headerName: "Phone", field: "phone", filter: true, width: 150 },
+      { headerName: "Company", field: "companyName", width: 150 },
+      { headerName: "Email", field: "email", width: 250 },
+      { headerName: "Phone", field: "phone", width: 150 },
       // {
       //   headerName: "View",
       //   field: "isView",
-      //   filter: true,
-      //   width: 130,
-      //   cellRenderer: (params) => {
+      //         //   width: 130,
+      //   renderCell: (params) => {
       //     return (
       //       <div className="flex flex-col items-start justify-center h-full">
       //         <Image
@@ -109,13 +104,12 @@ const VisitorApprovalListComponent = ({ status }) => {
       // },
       {
         field: "Restore",
-        filter: true,
         width: 130,
-        cellRenderer: (params) => {
+        renderCell: (params) => {
           return (
             <div className="flex flex-col items-start justify-center h-full">
               <Image
-                onClick={() => restoreVisitor(params.data._id)}
+                onClick={() => restoreVisitor(params.row._id)}
                 alt="approval_icon"
                 width={100}
                 height={100}
@@ -132,18 +126,16 @@ const VisitorApprovalListComponent = ({ status }) => {
       {
         headerName: "Name",
         field: "name",
-        filter: true,
         width: 150,
       },
-      { headerName: "Company", field: "companyName", filter: true, width: 150 },
-      { headerName: "Email", field: "email", filter: true, width: 250 },
-      { headerName: "Phone", field: "phone", filter: true, width: 150 },
+      { headerName: "Company", field: "companyName", width: 150 },
+      { headerName: "Email", field: "email", width: 250 },
+      { headerName: "Phone", field: "phone", width: 150 },
       // {
       //   headerName: "View",
       //   field: "isView",
-      //   filter: true,
-      //   width: 130,
-      //   cellRenderer: (params) => {
+      //         //   width: 130,
+      //   renderCell: (params) => {
       //     return (
       //       <div className="flex flex-col items-start justify-center h-full">
       //         <Image
@@ -162,13 +154,12 @@ const VisitorApprovalListComponent = ({ status }) => {
       // },
       {
         field: "Restore To Request",
-        filter: true,
         width: 130,
-        cellRenderer: (params) => {
+        renderCell: (params) => {
           return (
             <div className="flex flex-col items-start justify-center h-full">
               <Image
-                onClick={() => restoreToRequest(params.data._id)}
+                onClick={() => restoreToRequest(params.row._id)}
                 alt="approval_icon"
                 width={100}
                 height={100}
@@ -185,18 +176,16 @@ const VisitorApprovalListComponent = ({ status }) => {
       {
         headerName: "Name",
         field: "name",
-        filter: true,
         width: 150,
       },
-      { headerName: "Company", field: "companyName", filter: true, width: 150 },
-      { headerName: "Email", field: "email", filter: true, width: 250 },
-      { headerName: "Phone", field: "phone", filter: true, width: 150 },
+      { headerName: "Company", field: "companyName", width: 150 },
+      { headerName: "Email", field: "email", width: 250 },
+      { headerName: "Phone", field: "phone", width: 150 },
       // {
       //   headerName: "View",
       //   field: "isView",
-      //   filter: true,
-      //   width: 130,
-      //   cellRenderer: (params) => {
+      //         //   width: 130,
+      //   renderCell: (params) => {
       //     return (
       //       <div className="flex flex-col items-start justify-center h-full">
       //         <Image
@@ -215,14 +204,13 @@ const VisitorApprovalListComponent = ({ status }) => {
       // },
       {
         field: "Approve",
-        filter: true,
         width: 130,
-        cellRenderer: (params) => {
+        renderCell: (params) => {
           return (
             <div className="flex flex-col items-start justify-center h-full">
               <Image
                 onClick={() =>
-                  approveVisitor(params.data._id, params.data.email)
+                  approveVisitor(params.row._id, params.row.email)
                 }
                 alt="approval_icon"
                 width={100}
@@ -236,9 +224,8 @@ const VisitorApprovalListComponent = ({ status }) => {
       },
       {
         field: "Reject",
-        filter: true,
         width: 130,
-        cellRenderer: (params) => {
+        renderCell: (params) => {
           return (
             <div className="flex flex-col items-start justify-center h-full">
               <Image
@@ -247,7 +234,7 @@ const VisitorApprovalListComponent = ({ status }) => {
                 height={100}
                 className={`cursor-pointer w-auto h-4`}
                 src={`${BUCKET_URL}/admin/notApproved.svg`}
-                onClick={() => rejectVisitor(params.data._id)}
+                onClick={() => rejectVisitor(params.row._id)}
               />
             </div>
           );
@@ -557,7 +544,7 @@ const VisitorApprovalListComponent = ({ status }) => {
                       <div className="pl-4">
                         {
                           profileData.productInfo[
-                            "Trimmings and Embellishments"
+                          "Trimmings and Embellishments"
                           ]
                         }
                       </div>
@@ -668,8 +655,8 @@ const VisitorApprovalListComponent = ({ status }) => {
       ) : (
         ""
       )}
-      <TableMain
-        columnDefs={columns}
+      <CommonDataTable
+        columns={columns}
         rowData={visitorsData}
         filename={"Visitor-approval"}
       />

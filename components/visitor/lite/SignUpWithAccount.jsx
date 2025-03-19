@@ -13,6 +13,8 @@ import { trackUtil } from "@/lib/track";
 import { toast } from "react-toastify";
 import { haveAccount } from "@/GlobalRedux/features/neofairslite/neofairsLiteSlice";
 import PhoneInput from "react-phone-input-2";
+import { useQuery } from "@tanstack/react-query";
+import { request } from "@/lib/axios";
 
 const SignUpWithAccount = () => {
   const router = useRouter();
@@ -65,6 +67,17 @@ const SignUpWithAccount = () => {
     return "";
   };
 
+  const fetchSettings = async () => {
+    return request({ url: "visitor/settings", method: "get" });
+  };
+
+  const {
+    data: settingsData,
+  } = useQuery({
+    queryKey: ["settingsData"],
+    queryFn: fetchSettings,
+  });
+
   const {
     register,
     handleSubmit,
@@ -103,10 +116,10 @@ const SignUpWithAccount = () => {
         // toast.success(user.message, {
         //   position: toast.POSITION.TOP_RIGHT,
         // });
-        sessionStorage.setItem("token", user.token);
-        sessionStorage.setItem("role", "visitor");
-        sessionStorage.setItem("name", user.name);
-        sessionStorage.setItem("id", user.id);
+        localStorage.setItem("token", user.token);
+        localStorage.setItem("role", "visitor");
+        localStorage.setItem("name", user.name);
+        localStorage.setItem("id", user.id);
         trackUtil({
           trackEventType: "Login",
         });
@@ -214,10 +227,10 @@ const SignUpWithAccount = () => {
         // toast.success(user.message, {
         //   position: toast.POSITION.TOP_RIGHT,
         // });
-        sessionStorage.setItem("token", user.token);
-        sessionStorage.setItem("role", "visitor");
-        sessionStorage.setItem("name", user.name);
-        sessionStorage.setItem("id", user.id);
+        localStorage.setItem("token", user.token);
+        localStorage.setItem("role", "visitor");
+        localStorage.setItem("name", user.name);
+        localStorage.setItem("id", user.id);
         trackUtil({
           trackEventType: "Login",
         });
@@ -249,236 +262,43 @@ const SignUpWithAccount = () => {
   };
 
   return (
-    <>
-      {type == "error" || type == "" ? (
-        <>
-          <div className=" flex flex-row gap-2 items-center">
-            <Image
-              alt="dummy"
-              src={`${BUCKET_URL}/neofairs-lite/Visitor.svg`}
-              width={3000}
-              height={3000}
-              className="w-auto h-10"
-            ></Image>
-            <h1 className=" text-3xl font-bold text-black font-quickSand">
-              Visitor Login
-            </h1>
-          </div>
-          <div className="mt-5">
-            <div className="flex flex-row gap-4">
-              <div className="flex flex-row justify-start items-center gap-[5px]">
-                <input
-                  type="radio"
-                  id="smsCheck"
-                  value="sms"
-                  {...register("check", {
-                    required: "Select at least one method",
-                  })}
-                  className="h-[18px] w-[18px] form-radio cursor-pointer"
-                  onChange={() => setVerificationType("sms")}
-                />
-                <label
-                  htmlFor="smsCheck"
-                  className="text-black text-base font-quickSand font-bold cursor-pointer"
-                >
-                  Whatsapp
-                </label>
-              </div>
-              <div className="flex flex-row justify-start items-center gap-[5px]">
-                <input
-                  type="radio"
-                  id="emailCheck"
-                  value="email"
-                  {...register("check")}
-                  className="h-[18px] w-[18px] form-radio cursor-pointer"
-                  onChange={() => setVerificationType("email")}
-                />
-                <label
-                  htmlFor="emailCheck"
-                  className="text-black text-base font-quickSand font-bold cursor-pointer"
-                >
-                  Email
-                </label>
-              </div>
+    settingsData && settingsData.length && settingsData[0].blockVisitorLogin ?
+      <>
+        <div className=" flex flex-row gap-2 items-center">
+          <Image
+            alt="dummy"
+            src={`${BUCKET_URL}/neofairs-lite/Visitor.svg`}
+            width={3000}
+            height={3000}
+            className="w-auto h-10"
+          ></Image>
+          <h1 className=" text-3xl font-bold text-black font-quickSand">
+            Visitor Login
+          </h1>
+        </div>
+        <div className="mt-5">
+          <div className="flex flex-row gap-4">
+            <div className="flex flex-row justify-start items-center gap-[5px]">
+              <div dangerouslySetInnerHTML={{ __html: settingsData[0].blockMessage }}
+                style={{ color: "black" }} />
+              {/* <p className="  text-black font-quickSand">
+                The fair has not started yet, and login access is currently restricted.
+                Please check the event schedule and return when the fair is live.
+                If you have any questions, feel free to contact our support team.
+              </p> */}
             </div>
-            {errors.check && (
-              <p className="text-red font-semibold font-lato text-xs mt-2">
-                {errors.check.message}
-              </p>
-            )}
           </div>
-          {verificationType === "sms" && (
-            <div className="mt-5 flex flex-col gap-2">
-              <p className="text-black font-bold font-quickSand text-base">
-                *Whatsapp Number
-              </p>
-              <PhoneInput
-                name="phone"
-                required
-                inputClass="!rounded-lg !text-black !font-quickSand !font-semibold !text-sm"
-                inputStyle={{
-                  width: "100%",
-                  maxWidth: "100%",
-                  height: "48px",
-                  border: "solid 1px #23272D",
-                }}
-                country={"in"}
-                onChange={(value) => {
-                  setPhoneNumError("");
-                  setPhoneNum(value);
-                }}
-              />
-              {errors.phone && (
-                <p className="text-red font-semibold font-lato text-xs mt-2">
-                  {errors.phone.message}
-                </p>
-              )}
-              {phoneNumError && (
-                <p className="text-red font-semibold font-lato text-xs mt-2">
-                  {phoneNumError}
-                </p>
-              )}
-            </div>
-          )}
-          {verificationType === "email" && (
-            <div className=" mt-4 flex flex-col gap-2">
-              <p className=" text-black font-bold font-quickSand text-base">
-                *Email
-              </p>
-              <input
-                ref={emailphone}
-                type="text"
-                name="Email-phone"
-                id="Email-Phone"
-                onChange={(e) => isEmailValid(e.target.value)}
-                className=" border border-black h-12 rounded-lg text-black px-3  font-quickSand font-semibold text-sm"
-              />
-              {type == "error" && (
-                <p className="mt-3 text-red text-xs font-lato font-medium">
-                  {error}
-                </p>
-              )}
-            </div>
-          )}
-          <div style={{ display: "flex" }}>
-            <p
-              onClick={() => dispatch(haveAccount(!haveAccountValue))}
-              className=" text-[#2A9FE8] text-sm font-quickSand underline font-semibold cursor-pointer mt-5"
-            >
-              Don't have an account?
-            </p>
-            <p
-              onClick={() => setType("forgetPassWord")}
-              className=" text-[#2A9FE8] text-sm font-quickSand underline font-semibold mt-5 ml-3 cursor-pointer"
-            >
-              Forgot Password?
-            </p>
-          </div>
-
           <button
-            onClick={() => nextButton()}
-            className=" mt-10 bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto"
+            onClick={() => dispatch(haveAccount(!haveAccountValue))}
+            className=" bg-black text-white px-6 py-3 mt-4 rounded-lg font-lato font-bold text-base w-full md:w-auto"
           >
-            Next
+            Back
           </button>
-          <div className=" mt-10">
-            <Image
-              src={`${BUCKET_URL}/neofairs-lite/logo.svg`}
-              alt="lite-logo"
-              width={3000}
-              height={3000}
-              className=" w-full max-w-[205px]"
-            ></Image>
-          </div>
-        </>
-      ) : type == "phone" && !phoneSuccess ? (
-        <>
-          <h1 className=" text-3xl font-bold text-black font-quickSand">
-            Verify your OTP
-          </h1>
-          <p className=" mt-4 text-black font-bold font-quickSand text-base">
-            *Enter OTP
-          </p>
-          <div className=" mt-3 flex flex-row gap-5 items-center">
-            <OtpInputWithValidation
-              sendOtpToVerify={(otp) => setOtpToVerify(otp)}
-            />
-            {showTimer && <Timer stateChanger={setShowTimer}></Timer>}
-          </div>
-          <div className=" flex flex-row gap-4">
-            {process ? (
-              <button
-                type="button"
-                className="mt-10 bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto inline-flex items-center"
-                disabled
-              >
-                <svg
-                  className="animate-spin h-5 w-5 mr-3 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    stroke-width="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                  ></path>
-                </svg>
-                Processing...
-              </button>
-            ) : (
-              <button
-                onClick={handleVerify}
-                disabled={verifyButtonDisabled}
-                className={` ${
-                  verifyButtonDisabled ? "opacity-50" : ""
-                } mt-10 bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto`}
-              >
-                Verify
-              </button>
-            )}
-            <button
-              disabled={showTimer}
-              onClick={resendOTP}
-              className={` ${
-                showTimer ? "opacity-50" : ""
-              } mt-10 bg-[#FB5151] text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto`}
-            >
-              Resend
-            </button>
-          </div>
-        </>
-      ) : type == "phone" && phoneSuccess ? (
-        <>
-          <h1 className=" text-3xl font-bold text-black font-quickSand">
-            Verification Successful
-          </h1>
-          <div className=" mt-11 flex flex-col justify-center items-center gap-7">
-            <Image
-              alt="success"
-              src={`${BUCKET_URL}/neofairs-lite/success.svg`}
-              className=" max-w-[165px] h-auto"
-              height={3000}
-              width={3000}
-            ></Image>
-            <p className="text-base font-quickSand text-black font-medium">
-              Visitor verification is successful.
-            </p>
-          </div>
-        </>
-      ) : type == "forgetPassWord" ? (
-        <Forgetpassword></Forgetpassword>
-      ) : (
-        type == "email" && (
-          <div>
+        </div>
+      </> :
+      <>
+        {type == "error" || type == "" ? (
+          <>
             <div className=" flex flex-row gap-2 items-center">
               <Image
                 alt="dummy"
@@ -491,40 +311,152 @@ const SignUpWithAccount = () => {
                 Visitor Login
               </h1>
             </div>
-            <div className=" mt-5 flex flex-col gap-2">
-              <p className=" text-black font-bold font-quickSand text-base">
-                *Password
-              </p>
-              <input
-                ref={passwordRef}
-                type="password"
-                name="Password"
-                id="Password"
-                className=" border border-black h-12 rounded-lg text-black px-3  font-quickSand font-semibold text-sm"
-              />
-              {passwordError && (
-                <p className="mt-3 text-red text-xs font-lato font-medium">
-                  {passwordError}
+            <div className="mt-5">
+              <div className="flex flex-row gap-4">
+                <div className="flex flex-row justify-start items-center gap-[5px]">
+                  <input
+                    type="radio"
+                    id="smsCheck"
+                    value="sms"
+                    {...register("check", {
+                      required: "Select at least one method",
+                    })}
+                    className="h-[18px] w-[18px] form-radio cursor-pointer"
+                    onChange={() => setVerificationType("sms")}
+                  />
+                  <label
+                    htmlFor="smsCheck"
+                    className="text-black text-base font-quickSand font-bold cursor-pointer"
+                  >
+                    Whatsapp
+                  </label>
+                </div>
+                <div className="flex flex-row justify-start items-center gap-[5px]">
+                  <input
+                    type="radio"
+                    id="emailCheck"
+                    value="email"
+                    {...register("check")}
+                    className="h-[18px] w-[18px] form-radio cursor-pointer"
+                    onChange={() => setVerificationType("email")}
+                  />
+                  <label
+                    htmlFor="emailCheck"
+                    className="text-black text-base font-quickSand font-bold cursor-pointer"
+                  >
+                    Email
+                  </label>
+                </div>
+              </div>
+              {errors.check && (
+                <p className="text-red font-semibold font-lato text-xs mt-2">
+                  {errors.check.message}
                 </p>
               )}
             </div>
-            <p
-              onClick={() => setType("forgetPassWord")}
-              className=" text-[#2A9FE8] text-sm font-quickSand underline font-semibold mt-2 cursor-pointer"
-            >
-              Forgot Password?
-            </p>
-            <div className=" mt-5 flex flex-row gap-3">
-              <button
-                onClick={() => setType("")}
-                className=" bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto"
+            {verificationType === "sms" && (
+              <div className="mt-5 flex flex-col gap-2">
+                <p className="text-black font-bold font-quickSand text-base">
+                  *Whatsapp Number
+                </p>
+                <PhoneInput
+                  name="phone"
+                  required
+                  inputClass="!rounded-lg !text-black !font-quickSand !font-semibold !text-sm"
+                  inputStyle={{
+                    width: "100%",
+                    maxWidth: "100%",
+                    height: "48px",
+                    border: "solid 1px #23272D",
+                  }}
+                  country={"in"}
+                  onChange={(value) => {
+                    setPhoneNumError("");
+                    setPhoneNum(value);
+                  }}
+                />
+                {errors.phone && (
+                  <p className="text-red font-semibold font-lato text-xs mt-2">
+                    {errors.phone.message}
+                  </p>
+                )}
+                {phoneNumError && (
+                  <p className="text-red font-semibold font-lato text-xs mt-2">
+                    {phoneNumError}
+                  </p>
+                )}
+              </div>
+            )}
+            {verificationType === "email" && (
+              <div className=" mt-4 flex flex-col gap-2">
+                <p className=" text-black font-bold font-quickSand text-base">
+                  *Email
+                </p>
+                <input
+                  ref={emailphone}
+                  type="text"
+                  name="Email-phone"
+                  id="Email-Phone"
+                  onChange={(e) => isEmailValid(e.target.value)}
+                  className=" border border-black h-12 rounded-lg text-black px-3  font-quickSand font-semibold text-sm"
+                />
+                {type == "error" && (
+                  <p className="mt-3 text-red text-xs font-lato font-medium">
+                    {error}
+                  </p>
+                )}
+              </div>
+            )}
+            <div style={{ display: "flex" }}>
+              <p
+                onClick={() => dispatch(haveAccount(!haveAccountValue))}
+                className=" text-[#2A9FE8] text-sm font-quickSand underline font-semibold cursor-pointer mt-5"
               >
-                Back
-              </button>
+                Don't have an account?
+              </p>
+              <p
+                onClick={() => setType("forgetPassWord")}
+                className=" text-[#2A9FE8] text-sm font-quickSand underline font-semibold mt-5 ml-3 cursor-pointer"
+              >
+                Forgot Password?
+              </p>
+            </div>
+
+            <button
+              onClick={() => nextButton()}
+              className=" mt-10 bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto"
+            >
+              Next
+            </button>
+            <div className=" mt-10">
+              <Image
+                src={`${BUCKET_URL}/neofairs-lite/logo.svg`}
+                alt="lite-logo"
+                width={3000}
+                height={3000}
+                className=" w-full max-w-[205px]"
+              ></Image>
+            </div>
+          </>
+        ) : type == "phone" && !phoneSuccess ? (
+          <>
+            <h1 className=" text-3xl font-bold text-black font-quickSand">
+              Verify your OTP
+            </h1>
+            <p className=" mt-4 text-black font-bold font-quickSand text-base">
+              *Enter OTP
+            </p>
+            <div className=" mt-3 flex flex-row gap-5 items-center">
+              <OtpInputWithValidation
+                sendOtpToVerify={(otp) => setOtpToVerify(otp)}
+              />
+              {showTimer && <Timer stateChanger={setShowTimer}></Timer>}
+            </div>
+            <div className=" flex flex-row gap-4">
               {process ? (
                 <button
                   type="button"
-                  className="bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto inline-flex items-center"
+                  className="mt-10 bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto inline-flex items-center"
                   disabled
                 >
                   <svg
@@ -551,17 +483,130 @@ const SignUpWithAccount = () => {
                 </button>
               ) : (
                 <button
-                  className=" bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto"
-                  onClick={loginButton}
+                  onClick={handleVerify}
+                  disabled={verifyButtonDisabled}
+                  className={` ${verifyButtonDisabled ? "opacity-50" : ""
+                    } mt-10 bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto`}
                 >
-                  Login
+                  Verify
                 </button>
               )}
+              <button
+                disabled={showTimer}
+                onClick={resendOTP}
+                className={` ${showTimer ? "opacity-50" : ""
+                  } mt-10 bg-[#FB5151] text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto`}
+              >
+                Resend
+              </button>
             </div>
-          </div>
-        )
-      )}
-    </>
+          </>
+        ) : type == "phone" && phoneSuccess ? (
+          <>
+            <h1 className=" text-3xl font-bold text-black font-quickSand">
+              Verification Successful
+            </h1>
+            <div className=" mt-11 flex flex-col justify-center items-center gap-7">
+              <Image
+                alt="success"
+                src={`${BUCKET_URL}/neofairs-lite/success.svg`}
+                className=" max-w-[165px] h-auto"
+                height={3000}
+                width={3000}
+              ></Image>
+              <p className="text-base font-quickSand text-black font-medium">
+                Visitor verification is successful.
+              </p>
+            </div>
+          </>
+        ) : type == "forgetPassWord" ? (
+          <Forgetpassword></Forgetpassword>
+        ) : (
+          type == "email" && (
+            <div>
+              <div className=" flex flex-row gap-2 items-center">
+                <Image
+                  alt="dummy"
+                  src={`${BUCKET_URL}/neofairs-lite/Visitor.svg`}
+                  width={3000}
+                  height={3000}
+                  className="w-auto h-10"
+                ></Image>
+                <h1 className=" text-3xl font-bold text-black font-quickSand">
+                  Visitor Login
+                </h1>
+              </div>
+              <div className=" mt-5 flex flex-col gap-2">
+                <p className=" text-black font-bold font-quickSand text-base">
+                  *Password
+                </p>
+                <input
+                  ref={passwordRef}
+                  type="password"
+                  name="Password"
+                  id="Password"
+                  className=" border border-black h-12 rounded-lg text-black px-3  font-quickSand font-semibold text-sm"
+                />
+                {passwordError && (
+                  <p className="mt-3 text-red text-xs font-lato font-medium">
+                    {passwordError}
+                  </p>
+                )}
+              </div>
+              <p
+                onClick={() => setType("forgetPassWord")}
+                className=" text-[#2A9FE8] text-sm font-quickSand underline font-semibold mt-2 cursor-pointer"
+              >
+                Forgot Password?
+              </p>
+              <div className=" mt-5 flex flex-row gap-3">
+                <button
+                  onClick={() => setType("")}
+                  className=" bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto"
+                >
+                  Back
+                </button>
+                {process ? (
+                  <button
+                    type="button"
+                    className="bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto inline-flex items-center"
+                    disabled
+                  >
+                    <svg
+                      className="animate-spin h-5 w-5 mr-3 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        stroke-width="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                      ></path>
+                    </svg>
+                    Processing...
+                  </button>
+                ) : (
+                  <button
+                    className=" bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto"
+                    onClick={loginButton}
+                  >
+                    Login
+                  </button>
+                )}
+              </div>
+            </div>
+          )
+        )}
+      </>
   );
 };
 

@@ -14,7 +14,7 @@ export default function MeetingTrackingReport() {
         </div>
         <div className="divider w-[100%] mt-2"></div>
 
-        <div className="h-[90vh]">
+        <div className="h-auto">
           <MeetingTrackingReportComponent />
         </div>
       </div>

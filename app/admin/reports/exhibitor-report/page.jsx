@@ -1,9 +1,9 @@
 "use client";
-import CommonReportListComponent from "@/components/admin/CommonReportComponent/CommonReportListComponent";
 import React from "react";
 import { request } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import { ExhibitorsDef } from "@/components/tableColumnDef/reports/exhibitorsDef";
+import CommonDataTable from "@/components/grid/CommonDataTable";
 
 export default function ExhibitorReport() {
   const fetchExhibitors = async () => {
@@ -18,6 +18,10 @@ export default function ExhibitorReport() {
     queryFn: fetchExhibitors,
     refetchOnWindowFocus: true,
   });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error: {error.message}</div>;
+
   const newData =
     data &&
     data.map((item) => {
@@ -32,14 +36,16 @@ export default function ExhibitorReport() {
 
       return {
         ...item,
+        id: item._id, // Map _id to id for DataGrid
+        productInfo: newProductInfo, // Include formatted productInfo
         status:
-          item.active == "true"
+          item.active == true
             ? "Approved"
-            : item.blocked == "true"
-            ? "Blocked"
-            : item.active == "false"
-            ? "Pending"
-            : "Rejected",
+            : item.blocked == true
+              ? "Blocked"
+              : item.active == false
+                ? "Pending"
+                : "Rejected",
       };
     });
   return (
@@ -51,9 +57,8 @@ export default function ExhibitorReport() {
           </div>
         </div>
         <div className="divider w-[100%] mt-2"></div>
-
-        <div className="h-[90vh]">
-          <CommonReportListComponent
+        <div className="h-auto">
+          <CommonDataTable
             columns={ExhibitorsDef}
             rowData={newData}
             filename={"Exhibitor-Report"}

@@ -27,9 +27,9 @@ const VisitorStallView = () => {
   const id = searchParams.get("id");
 
   const visitorId =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
   const visitorName =
-    typeof window !== "undefined" ? sessionStorage.getItem("name") : null;
+    typeof window !== "undefined" ? localStorage.getItem("name") : null;
 
   const fetchStallData = async () => {
     return request({ url: `visitor/stall/${id}/${visitorId}`, method: "get" });
@@ -125,7 +125,7 @@ const VisitorStallView = () => {
     } else {
       setDevice("desktop");
     }
-    return () => {};
+    return () => { };
   }, []);
   useEffect(() => {
     dispatch(toggleNavbar(false));
@@ -328,14 +328,23 @@ const VisitorStallView = () => {
       ) : galleryModel ? (
         <GalleryModel
           handleClose={closeGallery}
-          galleryImages={stallData.galleryImageList}
+          galleryImages={[
+            ...stallData.galleryImageList.map((image) => ({
+              ...image,
+              type: "image",
+            })),
+            ...stallData.galleryVideoList.map((video) => ({
+              ...video,
+              type: "video",
+            })),
+          ]}
         ></GalleryModel>
       ) : floorModel ? (
         <FloorModel handleClose={closeFloor} />
       ) : (
         ""
       )}
-      <div className=" hidden scroll-icon fixed bottom-5 right-5 z-10">
+      {/* <div className=" hidden scroll-icon fixed bottom-5 right-5 z-10">
         <Image
           alt="img"
           src={`${BUCKET_URL}/stall-view/scroll-down.svg`}
@@ -349,12 +358,11 @@ const VisitorStallView = () => {
             });
           }}
         ></Image>
-      </div>
+      </div> */}
       {stallData && (
         <section
-          className={`bg-[#808080] w-full mx-auto relative md:pt-0 pb-24 md:pb-12 lg:pb-3 overflow-x-hidden lg:h-screen flex flex-col gap-[1.25rem] ${
-            device === "tablet" ? "!h-auto" : ""
-          }`}
+          className={`bg-[#808080] w-full mx-auto relative md:pt-0  md:pb-12 lg:pb-3 overflow-x-hidden lg:h-screen flex flex-col gap-[1.25rem] ${device === "tablet" ? "!h-auto" : ""
+            }`}
           id="main-content-body"
           style={{ overflow: "hidden" }}
         >
@@ -375,11 +383,10 @@ const VisitorStallView = () => {
                   onClick={(e) => {
                     moveToStall(stallData.stall.position, "prev");
                   }}
-                  className={`${
-                    stallData.stall && stallData.stall.position == 1
-                      ? " pointer-events-none opacity-50"
-                      : " opacity-100"
-                  }  h-20 w-20 flex flex-col gap-1 justify-center items-center rounded-full cursor-pointer bg-black `}
+                  className={`${stallData.stall && stallData.stall.position == 1
+                    ? " pointer-events-none opacity-50"
+                    : " opacity-100"
+                    }  h-20 w-20 flex flex-col gap-1 justify-center items-center rounded-full cursor-pointer bg-black `}
                 >
                   <Image
                     alt="img"
@@ -401,12 +408,11 @@ const VisitorStallView = () => {
                   onClick={(e) => {
                     moveToStall(stallData.stall.position, "next");
                   }}
-                  className={`${
-                    stallData.stall &&
+                  className={`${stallData.stall &&
                     stallData.stall.position == stallsListDetails.length
-                      ? " pointer-events-none opacity-50"
-                      : " opacity-100"
-                  }  h-20 w-20 flex flex-col gap-1 justify-center items-center rounded-full cursor-pointer bg-black `}
+                    ? " pointer-events-none opacity-50"
+                    : " opacity-100"
+                    }  h-20 w-20 flex flex-col gap-1 justify-center items-center rounded-full cursor-pointer bg-black `}
                 >
                   <Image
                     alt="img"
@@ -499,7 +505,7 @@ const VisitorStallView = () => {
                         width={3000}
                         height={3000}
                         className=" w-6 h-6"
-                        src={`${BUCKET_URL}/stall-view/twitter.svg`}
+                        src={`${BUCKET_URL}/social/x.svg`}
                       ></Image>
                       <p className=" text-xs font-quickSand font-bold mt-[2px]">
                         Twitter
@@ -556,11 +562,10 @@ const VisitorStallView = () => {
                 onClick={(e) => {
                   moveToStall(stallData.stall.position, "prev");
                 }}
-                className={`${
-                  stallData.stall && stallData.stall.position == 1
-                    ? " pointer-events-none opacity-50"
-                    : " opacity-100"
-                }  h-20 w-20 flex flex-col gap-1 justify-center items-center rounded-full cursor-pointer bg-black `}
+                className={`${stallData.stall && stallData.stall.position == 1
+                  ? " pointer-events-none opacity-50"
+                  : " opacity-100"
+                  }  h-20 w-20 flex flex-col gap-1 justify-center items-center rounded-full cursor-pointer bg-black `}
               >
                 <Image
                   alt="img"
@@ -583,12 +588,11 @@ const VisitorStallView = () => {
                 onClick={(e) => {
                   moveToStall(stallData.stall.position, "next");
                 }}
-                className={`${
-                  stallData.stall &&
+                className={`${stallData.stall &&
                   stallData.stall.position == stallsListDetails.length
-                    ? " pointer-events-none opacity-50"
-                    : " opacity-100"
-                }  h-20 w-20 flex flex-col gap-1 justify-center items-center rounded-full cursor-pointer bg-black `}
+                  ? " pointer-events-none opacity-50"
+                  : " opacity-100"
+                  }  h-20 w-20 flex flex-col gap-1 justify-center items-center rounded-full cursor-pointer bg-black `}
               >
                 <Image
                   alt="img"
@@ -709,7 +713,7 @@ const VisitorStallView = () => {
                 <div
                   className=" max-w-[45px] flex flex-col justify-center items-center cursor-pointer"
                   onClick={() => requestForInstantMeeting()}
-                  // onClick={() => router.push(`/visitor/video-chat?id=${id}`)}
+                // onClick={() => router.push(`/visitor/video-chat?id=${id}`)}
                 >
                   <div className=" w-10 h-10 p-2 bg-[#23272D] rounded-md">
                     <Image
@@ -958,7 +962,7 @@ const VisitorStallView = () => {
                         width={3000}
                         height={3000}
                         className=" w-6 h-6"
-                        src={`${BUCKET_URL}/stall-view/twitter.svg`}
+                        src={`${BUCKET_URL}/social/x.svg`}
                       ></Image>
                       {/* <p className=" text-xs font-quickSand font-bold mt-[2px]">
                         Twitter
@@ -1080,7 +1084,7 @@ const VisitorStallView = () => {
                         width={3000}
                         height={3000}
                         className=" w-6 h-6"
-                        src={`${BUCKET_URL}/stall-view/twitter.svg`}
+                        src={`${BUCKET_URL}/social/x.svg`}
                       ></Image>
                       {/* <p className=" text-xs font-quickSand font-bold mt-[2px]">
                         Twitter
@@ -1217,7 +1221,7 @@ const VisitorStallView = () => {
                       width={3000}
                       height={3000}
                       className=" w-6 h-6"
-                      src={`${BUCKET_URL}/stall-view/twitter.svg`}
+                      src={`${BUCKET_URL}/social/x.svg`}
                     ></Image>
                     <p className=" text-xs font-quickSand font-bold mt-[2px] text-white">
                       Twitter

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./side-nav.css";
 import Image from "next/image";
 import { isMobile, isTablet } from "react-device-detect";
@@ -12,13 +12,16 @@ import { request } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import AuditoriumModal from "./auditorium/AuditoriumModal";
 import ExhibitorProfile from "./ExhibitorProfile";
+import { toast } from "react-toastify";
 
 export default function SideNav(props) {
   const router = useRouter();
   const { userDetails, handleChatView } = props;
   const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
   const id =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
+  const role =
+    typeof window !== "undefined" ? localStorage.getItem("role") : null;
 
   const fetchInstantMeetingData = async () => {
     return request({
@@ -36,7 +39,7 @@ export default function SideNav(props) {
     queryKey: ["instant-meeting", id], // Include id in the queryKey
     queryFn: fetchInstantMeetingData,
     enabled: !!id, // Enable the query only if id is present
-    refetchInterval: 5000,
+    refetchInterval: 1000,
   });
 
   const fetchRequestedSlot = async () => {
@@ -77,24 +80,54 @@ export default function SideNav(props) {
   });
 
   const pathname = usePathname();
+
   const logout = () => {
-    sessionStorage.clear();
-    router.push("/exhibitor-login");
+    const userConfirmed = window.confirm("Are you sure you want to logout?");
+
+    if (userConfirmed) {
+      request({ url: `exhibitor/logout/${id}`, method: "get" });
+      localStorage.clear();
+      router.push("/exhibitor-login");
+    }
   };
+
   const [isClient, setIsClient] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [auditoriumModelOpen, setAuditoriumModelOpen] = useState(false);
   const [slotCount, setSlotCount] = useState(0);
   const [profile, setProfile] = useState(false);
 
+  const previousSlotCountRef = useRef(0);
+
   useEffect(() => {
     const slotCountForApproval =
-      (requestedSlots &&
-        requestedSlots.length &&
-        requestedSlots.filter((res) => res.status === "pending").length) ||
-      0;
+      requestedSlots && requestedSlots.length && requestedSlots?.filter((res) => res.status === "pending").length || 0;
+
+    if (slotCountForApproval > previousSlotCountRef.current) {
+      toast.info(`New Meeting request received. Please review the meeting.`, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 60000, // 1 minute
+      });
+    }
+
+    previousSlotCountRef.current = slotCountForApproval;
     setSlotCount(slotCountForApproval);
-  }, [requestedSlots, slotCount]);
+  }, [requestedSlots]);
+
+  const previousInstantMeetingCountRef = useRef(0);
+
+  useEffect(() => {
+    const instantMeetingCount = instantMeeting?.length || 0;
+
+    if (instantMeetingCount > previousInstantMeetingCountRef.current) {
+      toast.info(`New meeting request received. Please check “Join Meeting” section.`, {
+        position: toast.POSITION.TOP_RIGHT,
+        autoClose: 60000, // 1 minute
+      });
+    }
+
+    previousInstantMeetingCountRef.current = instantMeetingCount;
+  }, [instantMeeting]);
 
   useEffect(() => {
     setIsClient(true);
@@ -203,26 +236,28 @@ export default function SideNav(props) {
                 Dashboard Overview
               </p>
             </Link>
-            <div>
-              <Link
-                href="/exhibitor/stall-settings"
-                className={
-                  `${
-                    pathname === "/exhibitor/stall-settings" ? "active " : ""
-                  }` +
-                  "container menu-item px-3 rounded-2xl flex items-center flex-wrap justify-start relative"
-                }
-              >
-                <Image
-                  alt="stall creation"
-                  src={`${BUCKET_URL}/exibitor-menu-icons/stall.svg`}
-                  height={3000}
-                  width={3000}
-                  className=" max-w-[16px] max-h-4"
-                />
-                <p className="font-lato ml-2 text-sm m-0 p-0">Stall Settings</p>
-              </Link>
-            </div>
+            {
+              role != "Stall Manager" ? <div>
+                <Link
+                  href="/exhibitor/stall-settings"
+                  className={
+                    `${pathname === "/exhibitor/stall-settings" ? "active " : ""
+                    }` +
+                    "container menu-item px-3 rounded-2xl flex items-center flex-wrap justify-start relative"
+                  }
+                >
+                  <Image
+                    alt="stall creation"
+                    src={`${BUCKET_URL}/exibitor-menu-icons/stall.svg`}
+                    height={3000}
+                    width={3000}
+                    className=" max-w-[16px] max-h-4"
+                  />
+                  <p className="font-lato ml-2 text-sm m-0 p-0">Stall Settings</p>
+                </Link>
+              </div> : <></>
+            }
+
             <div>
               <Link
                 href="/exhibitor/my-stall"
@@ -241,6 +276,27 @@ export default function SideNav(props) {
                 <p className="font-lato ml-2 text-sm m-0 p-0">My Stall View</p>
               </Link>
             </div>
+            {
+              role != "Stall Manager" ?
+                <div>
+                  <Link
+                    href="/exhibitor/add-user"
+                    className={
+                      `${pathname === "/exhibitor/add-user" ? "active " : ""}` +
+                      "container menu-item px-3 rounded-2xl flex items-center flex-wrap justify-start relative"
+                    }
+                  >
+                    <Image
+                      alt="stall creation"
+                      src={`${BUCKET_URL}/exibitor-menu-icons/stall.svg`}
+                      height={3000}
+                      width={3000}
+                      className=" max-w-[16px] max-h-4"
+                    />
+                    <p className="font-lato ml-2 text-sm m-0 p-0">Add User</p>
+                  </Link>
+                </div> : <></>
+            }
             <div>
               <Link
                 href="#"
@@ -285,8 +341,7 @@ export default function SideNav(props) {
             <Link
               href="/exhibitor/requested-slots"
               className={
-                `${
-                  pathname === "/exhibitor/requested-slots" ? "active " : ""
+                `${pathname === "/exhibitor/requested-slots" ? "active " : ""
                 }` +
                 "container menu-item px-3 rounded-2xl flex items-center justify-start"
               }
@@ -342,22 +397,25 @@ export default function SideNav(props) {
               />
               <p className="font-lato ml-2 text-sm m-0 p-0">Auditorium</p>
             </div>
-            <Link
-              href="/exhibitor/reset-password"
-              className={
-                `${pathname === "/exhibitor/reset-password" ? "active " : ""}` +
-                "container menu-item px-3 rounded-2xl flex items-center justify-start"
-              }
-            >
-              <Image
-                alt="Reset Password"
-                src={`${BUCKET_URL}/exibitor-menu-icons/stall-solid.svg`}
-                height={3000}
-                width={3000}
-                className=" max-w-[16px] max-h-4"
-              />
-              <p className="font-lato ml-2 text-sm m-0 p-0">Reset Password</p>
-            </Link>
+            {
+              role != "Stall Manager" ?
+                <Link
+                  href="/exhibitor/reset-password"
+                  className={
+                    `${pathname === "/exhibitor/reset-password" ? "active " : ""}` +
+                    "container menu-item px-3 rounded-2xl flex items-center justify-start"
+                  }
+                >
+                  <Image
+                    alt="Reset Password"
+                    src={`${BUCKET_URL}/exibitor-menu-icons/stall-solid.svg`}
+                    height={3000}
+                    width={3000}
+                    className=" max-w-[16px] max-h-4"
+                  />
+                  <p className="font-lato ml-2 text-sm m-0 p-0">Reset Password</p>
+                </Link> : <></>
+            }
             <div
               onClick={() => logout()}
               className={

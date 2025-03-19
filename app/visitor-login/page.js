@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 
 const Page = () => {
   const visitorId =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
   const router = useRouter();
   if (router.isFallback) {
     return <div>Loading...</div>;

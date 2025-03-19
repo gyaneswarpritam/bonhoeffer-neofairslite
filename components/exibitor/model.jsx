@@ -1,13 +1,8 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { AgGridReact } from "ag-grid-react";
-
-import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
-import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import { breifcaseModel, profileModel, videoModel } from "@/models/data";
-import Image from "next/image";
 import "./model.css";
-import Link from "next/link";
+import CommonDataTableView from "../grid/CommonDataTableView";
 
 const Model = (props, { change }) => {
   const [rowData, setRowData] = useState([]);
@@ -124,7 +119,7 @@ const Model = (props, { change }) => {
     <>
       <div className="w-full h-[30rem] min-h-[30rem] md:h-auto bg-white flex flex-col justify-center items-start">
         <div className=" headerDiv w-full h-20 bg-[#222222] text-white text-lg font-lato flex items-center justify-between px-8">
-          <p className=" header text-2xl font-lato font-bold">{headerName}</p>
+          <p className=" header md:text-2xl sm:text-xl font-lato font-bold">{headerName}</p>
           <p
             className=" text-white text-xl font-bold cursor-pointer"
             onClick={() => props.change()}
@@ -133,12 +128,11 @@ const Model = (props, { change }) => {
           </p>
         </div>
         <div className="ag-theme-alpine h-full gridContainer w-full">
-          <AgGridReact
+          <CommonDataTableView
+            columns={columnDefs}
             rowData={rowData}
-            columnDefs={columnDefs}
-            rowHeight={50}
-            autoSizeColumns={true}
-          ></AgGridReact>
+            filename={""}
+          />
         </div>
       </div>
     </>

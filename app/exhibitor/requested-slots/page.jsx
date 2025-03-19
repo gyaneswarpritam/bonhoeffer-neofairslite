@@ -1,7 +1,4 @@
 "use client";
-import { AgGridReact } from "ag-grid-react";
-import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
-import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 import { request } from "@/lib/axios";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import LocationBand from "@/components/exibitor/locationBand";
@@ -10,23 +7,37 @@ import {
   sendEmailMeetingConfirmationUtil,
   trackMeetingUtil,
 } from "@/lib/track";
+import CommonDataTableView from "@/components/grid/CommonDataTableView";
+import { useRouter } from "next/navigation";
+import dayjs from "dayjs";
+import isSameOrAfter from "dayjs/plugin/isSameOrAfter";
+import { useState } from "react";
+
+dayjs.extend(isSameOrAfter);
 
 export default function Page() {
+  const router = useRouter();
   const queryClient = useQueryClient();
-  const exbId =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
-  const fetchSettings = async () => {
-    return request({ url: "visitor/settings", method: "get" });
-  };
+  const exhibitorId =
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
 
-  const { data: settingsData } = useQuery({
-    queryKey: ["settingsData"],
-    queryFn: fetchSettings,
-  });
+  const [activeTab, setActiveTab] = useState("upcoming meetings");
+
+  const today = dayjs().format("YYYY-MM-DD");
+
+  // const fetchSettings = async () => {
+  //   return request({ url: "visitor/settings", method: "get" });
+  // };
+
+  // const { data: settingsData } = useQuery({
+  //   queryKey: ["settingsData"],
+  //   queryFn: fetchSettings,
+  // });
 
   const fetchRequestedSlots = async () => {
+    if (!exhibitorId) return null;
     return request({
-      url: `exhibitor/get-requested-slots?id=${exbId}`,
+      url: `exhibitor/get-requested-slots?id=${exhibitorId}`,
       method: "get",
     });
   };
@@ -35,11 +46,21 @@ export default function Page() {
     queryKey: ["requested-slots"],
     queryFn: fetchRequestedSlots,
   });
+
+  // Filter upcoming and completed meetings
+  const upcomingMeetings = requestedslots && requestedslots.length ? requestedslots.filter((meeting) =>
+    dayjs(meeting.date).isSameOrAfter(today)
+  ) : [];
+  const completedMeetings = requestedslots && requestedslots.length ? requestedslots.filter((meeting) =>
+    dayjs(meeting.date).isBefore(today)
+  ) : [];
+
+
   const handleClick = async (action, data) => {
     try {
       const payload = {
         meetingId: data?.meetingId,
-        exhibitorId: exbId,
+        exhibitorId: exhibitorId,
         status: action == "approve" ? "booked" : "rejected",
         visitorId: data.visitorId,
       };
@@ -50,31 +71,30 @@ export default function Page() {
       });
       if (meetingData) {
         trackMeetingUtil({
-          trackEventType: `Slot ${
-            action == "approve" ? "approved" : "declined"
-          } by exhibitor.`,
+          trackEventType: `Slot ${action == "approve" ? "approved" : "declined"
+            } by exhibitor.`,
           data: {
             ...data,
             timeZone: data.timeZone,
             status: action == "approve" ? "booked" : "rejected",
           },
           visitor: data.visitorId,
-          exhibitor: exbId,
+          exhibitor: exhibitorId,
           meetingId: data?.meetingId,
         });
         sendEmailMeetingConfirmationUtil({
           visitorId: data.visitorId,
-          exhibitorId: exbId,
+          exhibitorId: exhibitorId,
           slotData: data,
+          status: action,
         });
       }
       queryClient.invalidateQueries("requested-slots");
       await refetch();
       notificationExhibitorUtil(
         {
-          notificationType: `Booking ${
-            action == "approve" ? "approved" : "Declined"
-          } by exhibitor.`,
+          notificationType: `Meeting ${action == "approve" ? "approved" : "Declined"
+            } by exhibitor.`,
           data: {
             bookingDate: data.date,
             meetingId: data.meetingId,
@@ -91,7 +111,7 @@ export default function Page() {
     try {
       const payload = {
         meetingId: data?.meetingId,
-        exhibitorId: exbId,
+        exhibitorId: exhibitorId,
         meetingLink: meetingLink,
       };
 
@@ -112,15 +132,11 @@ export default function Page() {
     }
   };
 
+  const joinMeeting = (id) => {
+    router.push(`/exhibitor/video-chat?id=${id}`);
+  }
+
   const tableColumnDef = [
-    {
-      headerName: "Meeting Id",
-      field: "meetingId",
-      filter: true,
-      minWidth: 230,
-      flex: 1,
-      autoHeight: true,
-    },
     {
       headerName: "Date",
       field: "date",
@@ -154,99 +170,101 @@ export default function Page() {
       autoHeight: true,
     },
     {
+      headerName: "Visitor Company",
+      field: "visitorCompany",
+      filter: true,
+      minWidth: 150,
+      flex: 1,
+      autoHeight: true,
+    },
+    {
+      headerName: "Visitor Email",
+      field: "visitorEmail",
+      filter: true,
+      minWidth: 150,
+      flex: 1,
+      autoHeight: true,
+    },
+    {
       headerName: "Status",
       field: "status",
       filter: true,
       minWidth: 100,
       flex: 1,
       autoHeight: true,
-      cellRenderer: (params) =>
+      renderCell: (params) =>
         params.value == "pending"
           ? "Pending"
           : params.value == "rejected"
-          ? "Declined"
-          : "Booked",
+            ? "Declined"
+            : "Booked",
+    },
+    {
+      headerName: "Meeting Link",
+      field: "meetingLink",
+      filter: true,
+      minWidth: 200,
+      flex: 1,
+      autoHeight: true,
+      renderCell: (params) => {
+        const status = params.row.status;
+        const isDefaultMeeting = params.row.defaultMeeting;
+        const meetingLink = params.row.meetingLink;
+
+        if (status === "booked") {
+          return isDefaultMeeting ? (
+            <a
+              onClick={() => joinMeeting(params.row._id)}
+              style={{ color: "blue", cursor: "pointer", textDecoration: "underline" }}
+            >
+              Join Meeting
+            </a>
+          ) : (
+            <a
+              href={meetingLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "blue", textDecoration: "underline" }}
+            >
+              Join Meeting
+            </a>
+          );
+        }
+
+        return null;
+      }
     },
     {
       headerName: "Action",
-      minWidth: 200,
-      cellRenderer: (params) => {
+      minWidth: 300,
+      renderCell: (params) => {
         return (
           <div
             style={{
-              display:
-                params?.node?.data?.status === "pending" ? "block" : "none",
+              display: params?.row?.status === "pending" ? "block" : "none",
             }}
           >
             <button
               className="cursor-pointer font-lato text-base font-bold text-black bg-brand-color rounded-lg px-2 py-2  md:w-min w-full"
-              onClick={() => handleClick("approve", params.node.data)}
+              onClick={() => handleClick("approve", params?.row)}
             >
               Approve
             </button>
             <button
               className="ml-2 cursor-pointer font-lato text-base font-bold text-white bg-static-black rounded-lg px-2 py-2  md:w-min w-full"
-              onClick={() => handleClick("reject", params.node.data)}
+              onClick={() => handleClick("reject", params?.row)}
             >
               Decline
             </button>
           </div>
         );
       },
-
-      minWidth: 150,
-      autoHeight: true,
     },
-    {
-      headerName: "Meeting Link",
-      field: "meetingLink",
-      minWidth: 300,
-      cellRenderer: (params) => {
-        if (params.data.status !== "booked") {
-          return null; // Return nothing if the status is not 'booked'
-        }
 
-        // const [meetingLink, setMeetingLink] = useState(
-        //   params.data.meetingLink || ""
-        // );
-
-        // const handleSaveClick = () => {
-        //   handleSaveMeetingLink(meetingLink, params.node.data);
-        // };
-
-        return (
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            {settingsData &&
-            settingsData[0] &&
-            settingsData[0]?.meetingType == "customVideo" ? (
-              <a
-                href={settingsData[0]?.customVideoLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ color: "blue" }}
-              >
-                Open Link
-              </a>
-            ) : (
-              <div>Check "Join Meeting" menu</div>
-            )}
-            {/* <input
-              type="text"
-              value={meetingLink}
-              onChange={(e) => setMeetingLink(e.target.value)}
-              placeholder="Enter meeting link"
-              className="input"
-              style={{ width: "100%" }}
-            />
-            <button onClick={handleSaveClick} style={{ color: "blue" }}>
-              Save
-            </button> */}
-          </div>
-        );
-      },
-      autoHeight: true,
-    },
   ];
+
+  if (!exhibitorId || exhibitorId === null) return null;
+
   return (
     <section
       className="lg:pl-3 lg:pr-5 lg:py-5 bg-white w-full h-full relative pt-20 pb-4 px-3 lg:min-h-screen  flex flex-col"
@@ -260,16 +278,61 @@ export default function Page() {
       </div> */}
       <div className="w-full h-full relative bottom-0 bg-white mx-auto my-auto flex flex-col items-start mt-5 rounded-lg overflow-hidden">
         <div className=" headerDiv w-full h-14 flex justify-between items-center bg-[#222222] text-white text-lg font-lato  px-8">
-          <p className=" header text-2xl font-lato font-bold">Requested</p>
+          <p className=" header text-2xl font-lato font-bold">Meeting Requested</p>
         </div>
-        <div className="ag-theme-alpine h-96 gridContainer pb-1 w-full">
-          <AgGridReact
-            style={{ width: "100%", height: "100%" }}
+        {/* Tabs */}
+        <div className="flex space-x-5 border-b pb-0 px-8 mt-4 w-full">
+          <button
+            className={`px-4 py-2 ${activeTab === "upcoming meetings"
+              ? "border-b-2 border-blue-500 font-bold"
+              : "text-gray-600"
+              }`}
+            onClick={() => setActiveTab("upcoming meetings")}
+          >
+            Upcoming Meetings
+          </button>
+          <button
+            className={`px-4 py-2 ${activeTab === "completed meetings"
+              ? "border-b-2 border-blue-500 font-bold"
+              : "text-gray-600"
+              }`}
+            onClick={() => setActiveTab("completed meetings")}
+          >
+            Completed Meetings
+          </button>
+        </div>
+
+        {/* Tab Content */}
+        <div className="w-full h-[80vh] px-2 md:px-8 bg-white rounded-b-[32px] pb-5 overflow-auto">
+          {activeTab === "upcoming meetings" ? (
+            <div className="w-full min-h-fit h-full max-h-[90%] bg-white">
+              <div className="ag-theme-alpine pb-1 w-full h-full">
+                <CommonDataTableView
+                  columns={tableColumnDef}
+                  rowData={upcomingMeetings}
+                  filename=""
+                />
+              </div>
+            </div>
+          ) : (
+            <div className="w-full min-h-fit h-full max-h-[90%] bg-white">
+              <div className="ag-theme-alpine pb-1 w-full h-full">
+                <CommonDataTableView
+                  columns={tableColumnDef}
+                  rowData={completedMeetings}
+                  filename=""
+                />
+              </div>
+            </div>
+          )}
+        </div>
+        {/* <div className="ag-theme-alpine h-96 gridContainer pb-1 w-full">
+          <CommonDataTableView
+            columns={tableColumnDef}
             rowData={requestedslots}
-            columnDefs={tableColumnDef}
-            autoSizeColumns={true}
-          ></AgGridReact>
-        </div>
+            filename={""}
+          />
+        </div> */}
       </div>
     </section>
   );

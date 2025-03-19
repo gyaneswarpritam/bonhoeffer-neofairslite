@@ -99,7 +99,7 @@ const VerifyProfileForm = ({
       <div className="modelDiv text-white mx-5 h-auto max-h-[90%] overflow-y-auto bg-white rounded-[20px] w-full max-w-[470px] md:p-[30px] p-5">
         {!verifyOtp ? (
           <form onSubmit={handleSubmit(onSubmit)}>
-            <h1 className="text-3xl font-bold text-black font-quickSand">
+            <h1 className="text-3xl sm:text-xl font-bold text-black font-quickSand">
               Verify Profile
             </h1>
 
@@ -216,7 +216,7 @@ const VerifyProfileForm = ({
                             border: "solid 1px #23272D",
                           }}
                           country={"in"}
-                          // onChange={(e) => handlePhoneChange(e)}
+                        // onChange={(e) => handlePhoneChange(e)}
                         />
                       )}
                       control={control}
@@ -238,7 +238,7 @@ const VerifyProfileForm = ({
             {(!visitorData?.hasEmailAndPassword || !visitorData?.hasPhone) && (
               <button
                 type="submit"
-                className="mt-10 bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto"
+                className="mt-10 sm:mt-1 bg-black text-white px-6 py-3 sm:py-1 rounded-lg font-lato font-bold text-base w-full md:w-auto"
               >
                 Verify
               </button>
@@ -246,7 +246,7 @@ const VerifyProfileForm = ({
             <button
               onClick={closeVerify}
               type="button"
-              className="ml-4 mt-10 bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto"
+              className="md:ml-4 sm:ml-0 md:mt-10 mt-2 xs:mt-2 bg-black text-white px-6 py-3 sm:py-1  rounded-lg font-lato font-bold text-base w-full md:w-auto"
             >
               Close
             </button>

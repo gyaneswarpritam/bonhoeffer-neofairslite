@@ -29,7 +29,7 @@ import MeetingListModel from "@/components/meetingListModel";
 
 const Page = () => {
   const exhibitorId =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
   const fetchStall = async () => {
     return request({
       url: `exhibitor/stall-by-exhibitor/${exhibitorId}`,
@@ -121,7 +121,7 @@ const Page = () => {
     } else {
       setDevice("desktop");
     }
-    return () => {};
+    return () => { };
   }, []);
   useEffect(() => {
     const slotCountForApproval =
@@ -203,7 +203,6 @@ const Page = () => {
   };
 
   const getVideoId = (url) => {
-    console.log(url, `@@@@@@@@@@@@@`);
     const match = url.match(
       /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&]+)/
     );
@@ -212,7 +211,6 @@ const Page = () => {
 
   // useEffect(() => {
   //   if (stallData && stallData?.stall) {
-  //     console.log(stallData, `%%%%%%%%%%%%%%`);
   //     if (!stallData?.stall?.stallBackgroundImage) {
   //       const videoId = getVideoId(stallData?.stall?.stallVideoLink);
 
@@ -289,12 +287,21 @@ const Page = () => {
       ) : galleryModel ? (
         <GalleryModel
           handleClose={closeGallery}
-          galleryImages={stallData.galleryImageList}
+          galleryImages={[
+            ...stallData.galleryImageList.map((image) => ({
+              ...image,
+              type: "image",
+            })),
+            ...stallData.galleryVideoList.map((video) => ({
+              ...video,
+              type: "video",
+            })),
+          ]}
         ></GalleryModel>
       ) : (
         ""
       )}
-      <div className=" hidden scroll-icon fixed bottom-5 right-5 z-10">
+      {/* <div className=" hidden scroll-icon fixed bottom-5 right-5 z-10">
         <Image
           alt="img"
           src={`${BUCKET_URL}/stall-view/scroll-down.svg`}
@@ -308,38 +315,23 @@ const Page = () => {
             });
           }}
         ></Image>
-      </div>
+      </div> */}
       {stallData && (
         <section
-          className={`bg-[#808080] w-full mx-auto relative md:pt-0 pb-24 md:pb-12 lg:pb-3 overflow-x-hidden lg:h-screen flex flex-col gap-[1.25rem] ${
-            device === "tablet" ? "!h-auto" : ""
-          }`}
+          className={`bg-[#808080] w-full mx-auto relative md:pt-0  md:pb-12 lg:pb-3 overflow-x-hidden lg:h-screen flex flex-col gap-[1.25rem] ${device === "tablet" ? "!h-auto" : ""
+            }`}
           id="main-content-body"
           style={{ overflow: "hidden" }}
         >
-          {stallData?.stall?.stallBackgroundImage ? (
-            <Image
-              alt="img"
-              ref={image}
-              src={stallData.stall.stallImage}
-              width={3000}
-              height={3000}
-              className="w-full h-auto"
-              unoptimized
-            ></Image>
-          ) : (
+          {/\.(mp4|webm|ogg)$/i.test(stallData?.stall?.stallImage) ? (
             <div
               style={{
                 position: "relative",
-                height: "100vh",
+                height: "88vh",
                 width: "100%",
                 zIndex: 0,
               }}
             >
-              {/* <div className="video-container">
-                <div id="player"></div>
-                <div className="overlay"></div>
-              </div> */}
               <video
                 style={{
                   position: "absolute",
@@ -361,7 +353,18 @@ const Page = () => {
                 Your browser does not support the video tag.
               </video>
             </div>
+          ) : (
+            <Image
+              alt="img"
+              ref={image}
+              src={stallData.stall.stallImage}
+              width={3000}
+              height={3000}
+              className="w-full h-auto"
+              unoptimized
+            ></Image>
           )}
+
           {device === "desktop" && height > 150 ? (
             <div className=" w-[80%] h-auto mx-auto text-center flex flex-col justify-center items-center">
               <div className=" px-4 py-2 flex flex-row flex-wrap gap-6 justify-center mt-10 mb-28">
@@ -438,7 +441,7 @@ const Page = () => {
                         width={3000}
                         height={3000}
                         className=" w-6 h-6"
-                        src={`${BUCKET_URL}/stall-view/twitter.svg`}
+                        src={`${BUCKET_URL}/social/x.svg`}
                       ></Image>
                       <p className=" text-xs font-quickSand font-bold mt-[2px]">
                         Twitter
@@ -508,9 +511,11 @@ const Page = () => {
                       src={`${BUCKET_URL}/stall-view/product.svg`}
                     ></Image>
                   </div>
-                  <p className=" text-xs font-quickSand font-bold mt-1 text-white">
-                    Products
-                  </p>
+                  {!isMobile && (
+                    <p className=" text-xs font-quickSand font-bold mt-1 text-white">
+                      Products
+                    </p>
+                  )}
                 </div>
                 <div
                   onClick={() => handleModelopen("profile")}
@@ -963,7 +968,7 @@ const Page = () => {
                         width={3000}
                         height={3000}
                         className=" w-6 h-6"
-                        src={`${BUCKET_URL}/stall-view/twitter.svg`}
+                        src={`${BUCKET_URL}/social/x.svg`}
                       ></Image>
                       {/* <p className=" text-xs font-quickSand font-bold mt-[2px]">
                       Twitter
@@ -1085,7 +1090,7 @@ const Page = () => {
                         width={3000}
                         height={3000}
                         className=" w-6 h-6"
-                        src={`${BUCKET_URL}/stall-view/twitter.svg`}
+                        src={`${BUCKET_URL}/social/x.svg`}
                       ></Image>
                       {/* <p className=" text-xs font-quickSand font-bold mt-[2px]">
                       Twitter
@@ -1272,7 +1277,7 @@ const Page = () => {
                         width={3000}
                         height={3000}
                         className=" w-6 h-6"
-                        src={`${BUCKET_URL}/stall-view/twitter.svg`}
+                        src={`${BUCKET_URL}/social/x.svg`}
                       ></Image>
                       <p className=" text-xs font-quickSand font-bold mt-[2px] text-white">
                         Twitter

@@ -17,7 +17,7 @@ const ExhibitorChatContainer = ({
   const [messages, setMessages] = useState([]);
   const scrollRef = useRef();
   const [arrivalMessage, setArrivalMessage] = useState(null);
-  const exhibitorId = sessionStorage.getItem("id");
+  const exhibitorId = localStorage.getItem("id");
 
   useEffect(() => {
     const fetchData = async () => {

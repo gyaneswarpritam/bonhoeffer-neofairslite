@@ -4,17 +4,14 @@ import Alert from "@mui/material/Alert";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 import Snackbar from "@mui/material/Snackbar";
-import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
-import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FiCalendar } from "react-icons/fi"; // Import the calendar icon
-import { AgGridReact } from "ag-grid-react";
 import moment from "moment-timezone";
 import Image from "next/image";
 import { usePathname, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useRef, useState } from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import TimezoneSelect from "react-timezone-select";
 import "./bookmeeting.css";
 import { request } from "@/lib/axios";
@@ -24,6 +21,7 @@ import { BUCKET_URL } from "@/config/constant";
 import Mybookings from "./Mybookings";
 import { sendEmailMeetingUtil, trackMeetingUtil, trackUtil } from "@/lib/track";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
 
 const BookMeetingComponent = ({ requestForInstantMeeting, stallData }) => {
   const [modelOpen, setModelOpen] = useState(false);
@@ -47,9 +45,9 @@ const BookMeetingComponent = ({ requestForInstantMeeting, stallData }) => {
   const pathname = usePathname();
   const [slots, setSlots] = useState([]);
   const visitorId =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
   const visitorName =
-    typeof window !== "undefined" ? sessionStorage.getItem("name") : null;
+    typeof window !== "undefined" ? localStorage.getItem("name") : null;
 
   const fetchSettings = async () => {
     return request({ url: "visitor/settings", method: "get" });
@@ -100,6 +98,7 @@ const BookMeetingComponent = ({ requestForInstantMeeting, stallData }) => {
   useEffect(() => {
     if (exhibitorId) setSelectedExhibitorId(exhibitorId);
   }, []);
+
   const tableColumnDef = [
     {
       headerName: "Sr.No",
@@ -149,8 +148,8 @@ const BookMeetingComponent = ({ requestForInstantMeeting, stallData }) => {
       minWidth: 200,
       flex: 1,
       autoHeight: true,
-      cellRenderer: (params) => {
-        const status = params.data.Status;
+      renderCell: (params) => {
+        const status = params.row.Status;
         if (status === "booked") {
           return settingsData &&
             settingsData[0] &&
@@ -159,17 +158,17 @@ const BookMeetingComponent = ({ requestForInstantMeeting, stallData }) => {
               href={settingsData[0]?.customVideoLink}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "blue" }}
+              style={{ color: "blue", cursor: "pointer" }}
             >
-              Open Link
+              Join Meeting
             </a>
           ) : (
             <a
               onClick={requestForInstantMeeting}
               rel="noopener noreferrer"
-              style={{ color: "blue" }}
+              style={{ color: "blue", cursor: "pointer" }}
             >
-              Open Link
+              Join Meeting
             </a>
           );
         }
@@ -183,12 +182,12 @@ const BookMeetingComponent = ({ requestForInstantMeeting, stallData }) => {
       minWidth: 200,
       flex: 1,
       autoHeight: true,
-      cellRenderer: (params) =>
+      renderCell: (params) =>
         params.value == "pending"
           ? "Pending"
           : params.value == "rejected"
-          ? "Declined"
-          : "Booked",
+            ? "Declined"
+            : "Booked",
     },
   ];
   const validateBookingRequest = ({
@@ -250,29 +249,32 @@ const BookMeetingComponent = ({ requestForInstantMeeting, stallData }) => {
       //   throw new Error(
       //     parsedResponse?.message || "Something went wrong.Please try again"
       //   );
-      if (!response?.slots?.length)
+      if (!response?.slots?.length) {
         setError({
           open: true,
           message: `No Slots available for Selected Options`,
         });
-      const isBooked = response?.slots.find((item) => {
-        return item?.visitorId === visitorId;
-      });
-      setIsBookedSlotOnCurrentDay(isBooked);
+      } else {
+        const isBooked = response?.slots.find((item) => {
+          return item?.visitorId === visitorId;
+        });
+        setIsBookedSlotOnCurrentDay(isBooked);
 
-      setSelectedSlot({
-        slotDate: isBooked?.slotDate,
-        exhibitorId: selectedExhibitorId,
-        visitorId,
-        time: isBooked?.time,
-        duration: isBooked?.durationInMinutes,
-        timeZone,
-        status: isBooked?.status,
-        meetingId: isBooked?.meetingId,
-      });
-      setSlots([...response?.slots] || []);
-      timeslots.current.style.display = "block";
+        setSelectedSlot({
+          slotDate: isBooked?.slotDate,
+          exhibitorId: selectedExhibitorId,
+          visitorId,
+          time: isBooked?.time,
+          duration: isBooked?.durationInMinutes,
+          timeZone,
+          status: isBooked?.status,
+          meetingId: isBooked?.meetingId,
+        });
+        setSlots([...response?.slots] || []);
+        timeslots.current.style.display = "block";
+      }
       setLoading(false);
+
     } catch (err) {
       setError({
         open: true,
@@ -388,18 +390,18 @@ const BookMeetingComponent = ({ requestForInstantMeeting, stallData }) => {
               stallName: stallData.stall.stallName,
             },
           });
-          trackMeetingUtil({
-            trackEventType: "Slot book request",
-            data: payload,
-            visitor: visitorId,
-            exhibitor: meetingData?.exhibitorId,
-            meetingId: meetingData?._id,
-          });
-          sendEmailMeetingUtil({
-            visitorId: visitorId,
-            exhibitorId: meetingData?.exhibitorId,
-            slotData: payload,
-          });
+          // trackMeetingUtil({
+          //   trackEventType: "Slot book request",
+          //   data: payload,
+          //   visitor: visitorId,
+          //   exhibitor: meetingData?.exhibitorId,
+          //   meetingId: meetingData?._id,
+          // });
+          // sendEmailMeetingUtil({
+          //   visitorId: visitorId,
+          //   exhibitorId: meetingData?.exhibitorId,
+          //   slotData: payload,
+          // });
 
           notificationVisitorUtil(
             {
@@ -427,6 +429,7 @@ const BookMeetingComponent = ({ requestForInstantMeeting, stallData }) => {
         exhibitorId: selectedExhibitorId,
         visitorId,
         time: data?.time,
+        // time: data?.time ? dayjs(data.time).format("HH:mm") : "",
         duration: data?.durationInMinutes,
         timeZone,
         status,
@@ -459,6 +462,7 @@ const BookMeetingComponent = ({ requestForInstantMeeting, stallData }) => {
         setError({ open: true, message: meetingData.message });
       }
       if (meetingData) {
+        payload.time = data?.time ? dayjs(data.time).format("HH:mm") : "";
         trackMeetingUtil({
           trackEventType: "Slot book request",
           data: payload,
@@ -554,6 +558,25 @@ const BookMeetingComponent = ({ requestForInstantMeeting, stallData }) => {
     }, {});
   };
   const groupedSlots = groupSlotsByDate(slots);
+
+  const CustomInput = React.forwardRef(({ value, onClick }, ref) => (
+    <div className="relative w-full">
+      <input
+        ref={ref}
+        value={value}
+        onClick={onClick}
+        readOnly
+        placeholder="dd/mm/yyyy"
+        className="h-[35px] min-h-[35px] rounded-lg w-full min-w-[185px] px-3 pr-10 outline-none font-medium font-lato text-sm"
+      />
+      <FiCalendar
+        className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 cursor-pointer"
+        size={20}
+        onClick={onClick}
+      />
+    </div>
+  ));
+
   return (
     <>
       {modelOpen ? (
@@ -566,11 +589,11 @@ const BookMeetingComponent = ({ requestForInstantMeeting, stallData }) => {
         ""
       )}
       <section
-        className="lg:pl-3 lg:pr-5 lg:py-5 bg-white w-full no-scrollbar relative  px-3 h-auto"
+        className="lg:pl-3 lg:pr-5 lg:py-5 bg-white w-full overflow-x-scroll px-3 h-[100vh]"
         id="main-content-body"
       >
         <div className=" w-full h-full">
-          <div className="w-full flex flex-row gap-5 flex-wrap justify-between bg-black rounded-t-2xl px-7 py-4">
+          <div className="w-full flex flex-row gap-5 sm:gap-2 flex-wrap md:flex-nowrap justify-between bg-black rounded-t-2xl px-7 sm:px-2 py-4 sm:py-1 overflow-x-auto">
             <div className=" w-full md:w-fit flex flex-row justify-start items-center gap-4">
               <p className=" font-bold font-quickSand text-base text-white">
                 Select Company
@@ -609,7 +632,7 @@ const BookMeetingComponent = ({ requestForInstantMeeting, stallData }) => {
                 type="date"
                 placeholder="dd/mm/yyyy"
               ></input> */}
-              <div className="relative">
+              <div >
                 <DatePicker
                   selected={selectedDate}
                   onChange={handleDateChange}
@@ -618,76 +641,82 @@ const BookMeetingComponent = ({ requestForInstantMeeting, stallData }) => {
                   placeholderText="dd/mm/yyyy"
                   className="h-[35px] min-h-[35px] rounded-lg w-full min-w-[185px] px-3 outline-none font-medium font-lato text-sm"
                   dateFormat="dd/MM/yyyy"
-                  // Custom styles for disabled dates
-                  // dayClassName={(date) => {
-                  //   if (
-                  //     date < new Date(exhibitionDate?.startDate) ||
-                  //     date > new Date(exhibitionDate?.endDate)
-                  //   ) {
-                  //     return "disabled-date";
-                  //   }
-                  //   return undefined;
-                  // }}
+                  customInput={<CustomInput />}
+                // Custom styles for disabled dates
+                // dayClassName={(date) => {
+                //   if (
+                //     date < new Date(exhibitionDate?.startDate) ||
+                //     date > new Date(exhibitionDate?.endDate)
+                //   ) {
+                //     return "disabled-date";
+                //   }
+                //   return undefined;
+                // }}
                 />
-                <FiCalendar
+                {/* <FiCalendar
                   className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500"
                   size={20}
-                />
+                /> */}
               </div>
             </div>
-            <div className=" w-full md:w-fit flex flex-row justify-start items-center gap-4 md:max-w-[320px]">
-              <p className=" font-bold font-quickSand text-base text-white">
+            <div className="w-full md:w-fit flex flex-row justify-start items-center gap-4 md:max-w-[320px]">
+              <p className="font-bold font-quickSand text-base text-white">
                 Select Timezone
               </p>
-              <div className="h-[35px] w-full rounded-lg  min-w-[200px]">
+              <div className="h-[35px] w-full rounded-lg min-w-[200px]">
                 <TimezoneSelect
-                  className=" h-full w-full rounded-lg timezoneParent outline-none font-medium font-lato text-sm"
+                  className="h-full w-full rounded-lg timezoneParent outline-none font-medium font-lato text-sm"
                   value={selectedTimezone}
                   onChange={handleTimezoneChange}
+                  menuPortalTarget={document.body} // Moves dropdown outside parent
+                  styles={{
+                    menuPortal: (base) => ({ ...base, zIndex: 9999 }) // Ensures visibility
+                  }}
                 />
               </div>
             </div>
+
           </div>
-          <div className=" bg-[#F5F5F5] rounded-b-2xl h-full w-full p-6">
+          <div className=" bg-[#F5F5F5] rounded-b-2xl w-full p-6">
             <div
               ref={timeslots}
               className={`${title == undefined ? "hidden" : ""}`}
             >
-              <div className=" flex flex-row justify-end items-center gap-5">
+              <div className=" flex flex-row flex-wrap justify-center items-center gap-5">
                 <div className=" flex flex-row gap-1 justify-start items-center">
                   <div className="w-2 h-2 bg-[#ffff] rounded-full"></div>
                   <p className=" font-quickSand text-xs font-semibold">
-                    Slot Available
+                    Available
                   </p>
                 </div>
                 <div className=" flex flex-row gap-1 justify-start items-center">
                   <div className="w-2 h-2 bg-[#4ABD5D] rounded-full"></div>
                   <p className=" font-quickSand text-xs font-semibold">
-                    You have booked this slot
+                    My Booking
                   </p>
                 </div>
                 <div className=" flex flex-row gap-1 justify-start items-center">
                   <div className="w-2 h-2 bg-[#840cf5] rounded-full"></div>
                   <p className=" font-quickSand text-xs font-semibold">
-                    Slot Booked
+                    Booked
                   </p>
                 </div>
                 <div className=" flex flex-row gap-1 justify-start items-center">
                   <div className="w-2 h-2 bg-[#A7A7A7] rounded-full"></div>
                   <p className=" font-quickSand text-xs font-semibold">
-                    Slot Expired
+                    Expired
                   </p>
                 </div>
                 <div className=" flex flex-row gap-1 justify-start items-center">
                   <div className="w-2 h-2 bg-[#f30505] rounded-full"></div>
                   <p className=" font-quickSand text-xs font-semibold">
-                    Slot Declined
+                    Declined
                   </p>
                 </div>
                 <div className=" flex flex-row gap-1 justify-start items-center">
                   <div className="w-2 h-2 bg-[orange] rounded-full"></div>
                   <p className=" font-quickSand text-xs font-semibold">
-                    Pending Approval
+                    Pending
                   </p>
                 </div>
               </div>
@@ -695,14 +724,14 @@ const BookMeetingComponent = ({ requestForInstantMeeting, stallData }) => {
                 <div className="flex flex-col mt-4">
                   {/* Iterate over each date and its corresponding slots */}
                   {Object.keys(groupedSlots).map((slotDate) => (
-                    <div key={slotDate} className="mb-6">
+                    <div key={slotDate} className="md:mb-6 mb-2">
                       {/* Date heading */}
                       <h3 className="text-lg font-bold mb-2">
                         {moment(slotDate).format("MMMM DD, YYYY")}
                       </h3>
 
                       {/* Display the slots for this date */}
-                      <div className="flex flex-row flex-wrap gap-4 justify-start items-center cursor-pointer">
+                      <div className="flex flex-row flex-wrap gap-3 justify-start items-center cursor-pointer">
                         {groupedSlots[slotDate].map((data) => (
                           <div
                             key={data?.slotTiming}
@@ -727,7 +756,7 @@ const BookMeetingComponent = ({ requestForInstantMeeting, stallData }) => {
                 </div>
               </div>
             </div>
-            <div className=" mt-14 flex gap-6 w-full md:w-fit flex-col md:flex-row justify-start items-start md:items-center">
+            <div className=" md:mt-14 mt-4 mb-4 flex gap-6 w-full md:w-fit flex-col md:flex-row justify-start items-start md:items-center">
               <button
                 onClick={(e) => handleBooking(e)}
                 className=" p-4 font-lato font-bold text-base bg-[#1C1B20] text-white rounded-lg"

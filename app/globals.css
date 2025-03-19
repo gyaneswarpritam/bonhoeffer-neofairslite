@@ -37,3 +37,6 @@ body {
   font-weight: bold;
   padding-right: 3rem;
 }
+.MuiDataGrid-columnHeaderTitle {
+  font-weight: bolder !important;
+}

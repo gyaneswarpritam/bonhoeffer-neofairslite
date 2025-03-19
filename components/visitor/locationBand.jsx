@@ -11,7 +11,7 @@ import Link from "next/link";
 
 function locationBand() {
   const visitorId =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
 
   // Fetch loggedin-user data
   const fetchLoggedUser = async () => {

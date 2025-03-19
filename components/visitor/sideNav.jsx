@@ -13,7 +13,7 @@ export default function SideNav(props) {
   const { userDetails } = props;
   const pathname = usePathname();
   const logout = () => {
-    sessionStorage.clear();
+    localStorage.clear();
     router.push("/");
   };
 
@@ -86,8 +86,7 @@ export default function SideNav(props) {
             <Link
               href="/visitor/exibitorInformation"
               className={
-                `${
-                  pathname === "/visitor/exibitorInformation" ? "active " : ""
+                `${pathname === "/visitor/exibitorInformation" ? "active " : ""
                 }` +
                 "container menu-item px-3 rounded-2xl flex items-center justify-start"
               }

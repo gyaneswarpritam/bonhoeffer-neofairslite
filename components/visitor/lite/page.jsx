@@ -67,13 +67,13 @@ const Page = () => {
     } else {
       setDevice("desktop");
     }
-    return () => {};
+    return () => { };
   }, []);
   useEffect(() => {
     setTimeout(() => {
       setHeight(window.innerHeight - image.current.height);
     }, 1000);
-    return () => {};
+    return () => { };
   }, [loaded]);
 
   // alert(height);
@@ -140,7 +140,7 @@ const Page = () => {
           <GalleryModel handleClose={closeGallery}></GalleryModel>
         )}
 
-        <div className=" hidden scroll-icon fixed bottom-5 right-5 z-10">
+        {/* <div className=" hidden scroll-icon fixed bottom-5 right-5 z-10">
           <Image
             src="/stall-view/scroll-down.svg"
             width={100}
@@ -153,11 +153,10 @@ const Page = () => {
               });
             }}
           ></Image>
-        </div>
+        </div> */}
         <section
-          className={`bg-[#808080] w-full mx-auto relative md:pt-0 pb-24 md:pb-12 lg:pb-3 overflow-x-hidden lg:h-screen overflow-y-auto flex flex-col gap-[1.25rem] ${
-            device === "tablet" ? "!h-auto" : ""
-          }`}
+          className={`bg-[#808080] w-full mx-auto relative md:pt-0  md:pb-12 lg:pb-3 overflow-x-hidden lg:h-screen overflow-y-auto flex flex-col gap-[1.25rem] ${device === "tablet" ? "!h-auto" : ""
+            }`}
           id="main-content-body"
         >
           <Image
@@ -277,7 +276,7 @@ const Page = () => {
                     width={3000}
                     height={3000}
                     className=" w-6 h-6"
-                    src="/stall-view/twitter.svg"
+                    src="/social/x.svg"
                   ></Image>
                   <p className=" text-xs font-quickSand font-bold mt-[2px]">
                     Twitter
@@ -683,7 +682,7 @@ const Page = () => {
                     width={3000}
                     height={3000}
                     className=" w-6 h-6"
-                    src="/stall-view/twitter.svg"
+                    src="/social/x.svg"
                   ></Image>
                   {/* <p className=" text-xs font-quickSand font-bold mt-[2px]">
                   Twitter
@@ -775,7 +774,7 @@ const Page = () => {
                     width={3000}
                     height={3000}
                     className=" w-6 h-6"
-                    src="/stall-view/twitter.svg"
+                    src="/social/x.svg"
                   ></Image>
                   {/* <p className=" text-xs font-quickSand font-bold mt-[2px] text-white">
                   Twitter
@@ -882,7 +881,7 @@ const Page = () => {
                   width={3000}
                   height={3000}
                   className=" w-6 h-6"
-                  src="/stall-view/twitter.svg"
+                  src="/social/x.svg"
                 ></Image>
                 <p className=" text-xs font-quickSand font-bold mt-[2px] text-white">
                   Twitter

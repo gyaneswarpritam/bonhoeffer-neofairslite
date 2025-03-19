@@ -82,7 +82,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -92,7 +92,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -102,7 +102,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: false
     },
@@ -112,7 +112,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: true
     },
@@ -122,7 +122,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -132,7 +132,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -142,7 +142,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -152,7 +152,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -162,7 +162,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -172,7 +172,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -182,7 +182,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -192,7 +192,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: false
     },
@@ -202,7 +202,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: true
     },
@@ -212,7 +212,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -222,7 +222,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -232,7 +232,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -242,7 +242,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -252,7 +252,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -262,7 +262,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -272,7 +272,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -282,7 +282,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: false
     },
@@ -292,7 +292,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: true
     },
@@ -302,7 +302,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -312,7 +312,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -322,7 +322,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -332,7 +332,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -342,7 +342,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -352,7 +352,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -362,7 +362,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -372,7 +372,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: false
     },
@@ -382,7 +382,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: true
     },
@@ -392,7 +392,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -402,7 +402,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -412,7 +412,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -422,7 +422,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -432,7 +432,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -442,7 +442,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -452,7 +452,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -462,7 +462,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: false
     },
@@ -472,7 +472,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: true
     },
@@ -482,7 +482,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -492,7 +492,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -502,7 +502,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -512,7 +512,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -522,7 +522,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -532,7 +532,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -542,7 +542,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -552,7 +552,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: false
     },
@@ -562,7 +562,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: true
     },
@@ -572,7 +572,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -582,7 +582,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -592,7 +592,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -602,7 +602,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -612,7 +612,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -622,7 +622,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -632,7 +632,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -642,7 +642,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: false
     },
@@ -652,7 +652,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: true
     },
@@ -662,7 +662,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -672,7 +672,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -682,7 +682,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -692,7 +692,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -702,7 +702,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -712,7 +712,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -722,7 +722,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -732,7 +732,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: false
     },
@@ -742,7 +742,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: true
     },
@@ -752,7 +752,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -762,7 +762,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -772,7 +772,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -782,7 +782,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -792,7 +792,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -802,7 +802,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -812,7 +812,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -822,7 +822,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: false
     },
@@ -832,7 +832,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: true
     },
@@ -842,7 +842,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -852,7 +852,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -862,7 +862,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -872,7 +872,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -882,7 +882,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -892,7 +892,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -902,7 +902,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -912,7 +912,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: false
     },
@@ -922,7 +922,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: true
     },
@@ -932,7 +932,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -942,7 +942,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -952,7 +952,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -962,7 +962,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -972,7 +972,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -982,7 +982,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -992,7 +992,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -1002,7 +1002,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: false
     },
@@ -1012,7 +1012,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "Mr.Jack",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: true
     },
@@ -1022,7 +1022,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -1032,7 +1032,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     },
@@ -1042,7 +1042,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "false",
         isApprove: true
     },
@@ -1052,7 +1052,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: false,
         isApprove: false
     },
@@ -1062,7 +1062,7 @@ export const visitorsData = [
         mail: "manju@gmail.com",
         phone: "+9195874555",
         vip: "",
-        breifcase: "",
+        briefcase: "",
         isView: "true",
         isApprove: true
     }

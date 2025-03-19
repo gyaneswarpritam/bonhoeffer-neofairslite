@@ -7,7 +7,7 @@ import { BUCKET_URL } from "@/config/constant";
 export default function Page() {
   return (
     <section
-      className="no-scrollbar lg:pl-3 lg:pr-5 lg:py-5 bg-white w-full relative pt-20 pb-24 px-3 lg:min-h-screen  flex flex-col gap-[1.25rem]"
+      className="no-scrollbar lg:pl-3 lg:pr-5 lg:py-5 bg-white w-full relative pt-20  px-3 lg:min-h-screen  flex flex-col gap-[1.25rem]"
       id="main-content-body"
     >
       <LocationBand></LocationBand>

@@ -1,8 +1,90 @@
-@media screen and (max-device-width: 1024px) and (orientation: landscape) {
+/* @media screen and (max-device-width: 1024px) and (orientation: landscape) {
   .rotateText {
     display: none !important;
   }
   .wrapper {
     margin-bottom: 40px;
   }
+} */
+/* Main container ensuring full height */
+.auditorium-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Wrapper holding background image and iframe */
+.wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Background image adjustments */
+.background-image {
+  width: 100%;
+  height: 100vh;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+/* Video container */
+.imageres {
+  width: 50%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  z-index: 10;
+  top: 4%; /* Default for Desktop */
+}
+
+/* Responsive iframe */
+.responsive-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Responsive Design for Mobile */
+@media (min-width: 740px) and (max-width: 768px) {
+
+  .auditorium-container {
+    height: 100vh;
+  }
+
+  .background-image {
+    height: 100vh;
+    object-fit: cover;
+  }
+
+  .imageres {
+    width: 53%; /* Increase iframe width */
+    top: 7%; /* Adjust position for mobile */
+  }
+}
+/* Responsive Design for Mobile */
+@media (min-width: 360px) and (max-width: 739px) {
+  .auditorium-container {
+    height: 100vh;
+  }
+
+  .background-image {
+    height: 100vh;
+    object-fit: cover;
+  }
+
+  .imageres {
+    width: 98%; /* Increase iframe width */
+    top: 30%; /* Adjust position for mobile */
+  }
+  
 }

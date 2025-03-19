@@ -1,9 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { AgGridReact } from "ag-grid-react";
-
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-alpine.css";
 import { useDispatch, useSelector } from "react-redux";
 import { modelClose } from "@/GlobalRedux/features/dialogs/dialogSlice";
 import PdfModal from "../PdfModal";
@@ -16,6 +12,8 @@ import StarRatingComponent from "react-star-rating-component";
 import Image from "next/image";
 import "./model.css";
 import dayjs from "dayjs";
+import CommonProductDataTableView from "../grid/CommonProductDataTableView";
+import CommonDataTableView from "../grid/CommonDataTableView";
 
 const Model = ({
   stallData,
@@ -26,7 +24,7 @@ const Model = ({
 }) => {
   const queryClient = useQueryClient();
   const visitorId =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
   const [rowData, setRowData] = useState([]);
   const [columnDefs, setColumnDefs] = useState([]);
   const [headerName, SetHeaderName] = useState("");
@@ -70,10 +68,11 @@ const Model = ({
     productdata =
       productdata &&
       productdata.map((product) => {
+
         // Check if the product exists in briefcaseData by comparing the product URL
-        const existsInBriefcase = briefcaseData.some(
+        const existsInBriefcase = briefcaseData && briefcaseData.length ? briefcaseData.some(
           (briefcase) => briefcase.productUrl === product.url
-        );
+        ) : false;
 
         // Return the product with the briefcase property
         return { ...product, briefcase: existsInBriefcase };
@@ -136,7 +135,7 @@ const Model = ({
     onError: (error) => {
       console.log(error);
     },
-    onSuccess: (data, variables, context) => {},
+    onSuccess: (data, variables, context) => { },
   });
 
   const briefcaseClick = (value) => {
@@ -148,6 +147,13 @@ const Model = ({
       locked: value.locked,
     };
     addToBriefCase(payload);
+    trackUtil({
+      trackEventType: `Added To Briefcase`,
+      data: {
+        productName: value.title,
+        stallName: stallData.stall.stallName,
+      },
+    });
   };
 
   const likeClick = (value) => {
@@ -160,7 +166,7 @@ const Model = ({
   };
 
   const handleRatingClick = (params, nextValue) => {
-    const rowData = params.data; // Complete row data
+    const rowData = params?.row || params; // Complete row data
     const selectedRating = nextValue; // Selected rating value
 
     // Use rowData and selectedRating as needed
@@ -181,13 +187,20 @@ const Model = ({
   };
 
   const imageclick = async (value) => {
+    if (headerName === "Brief Case") {
+      value = {
+        url: value.productUrl,
+        stall: value.stallName
+      }
+    }
+
     setPdfFile(value.url);
     setOpenPdf(true);
     if (stallData && stallData.stall) {
       trackUtil({
         trackEventType: `Product View`,
         data: {
-          name: value.url,
+          productName: value.title,
           stallName: stallData.stall.stallName,
         },
       });
@@ -285,7 +298,7 @@ const Model = ({
       filter: true,
       flex: 2,
       minWidth: 250,
-      cellRenderer: (params) => {
+      renderCell: (params) => {
         return dayjs(params.value).format("DD-MM-YYYY HH:mm");
       },
     },
@@ -294,15 +307,15 @@ const Model = ({
       field: "productUrl",
       filter: true,
       width: 100,
-      cellRenderer: (params) => {
+      renderCell: (params) => {
         return (
           <Image
             alt="pdf file"
             width={200}
             height={200}
             src={`${BUCKET_URL}/PDF_file_icon.svg`}
-            className="h-auto w-5 mx-auto my-auto cursor-pointer"
-            onClick={() => pdfclick(params.data)}
+            className="h-auto w-5 my-auto cursor-pointer mt-3"
+            onClick={() => pdfclick(params.row)}
           />
         );
       },
@@ -312,26 +325,26 @@ const Model = ({
     {
       headerName: "Request Catalogue",
       field: "catalog",
-      cellRenderer: (params) => {
-        const value = params.data.catalog;
+      renderCell: (params) => {
+        const value = params.row.catalog;
 
         return (
           <div>
-            {params.data.productLocked == true ? (
+            {params.row.productLocked == true ? (
               value == true ? (
                 <p>Catalogue Requested</p>
               ) : (
                 <button
                   style={{ color: "blue" }}
                   className=" cursor-pointer border-0 bg-none"
-                  onClick={(e) => requestFileButton(e, params.data)}
+                  onClick={(e) => requestFileButton(e, params.row)}
                 >
                   Request for Catalogue
                 </button>
               )
             ) : (
               <button
-                onClick={() => handleDownload(params?.data)}
+                onClick={() => handleDownload(params?.row)}
                 className="w-5 h-auto cursor-pointer"
               >
                 <Image
@@ -365,15 +378,15 @@ const Model = ({
       field: "url",
       filter: true,
       width: 100,
-      cellRenderer: (params) => {
+      renderCell: (params) => {
         return (
           <Image
             alt="pdf file"
             width={200}
             height={200}
             src={`${BUCKET_URL}/PDF_file_icon.svg`}
-            className="h-auto w-5 mx-auto my-auto cursor-pointer"
-            onClick={() => imageclick(params.data)}
+            className="h-auto w-5 my-auto cursor-pointer mt-3"
+            onClick={() => imageclick(params.row)}
           />
         );
       },
@@ -383,7 +396,7 @@ const Model = ({
     {
       headerName: "BriefCase",
       field: "briefcase",
-      cellRenderer: (params) => {
+      renderCell: (params) => {
         return (
           <div>
             {params.value ? (
@@ -395,8 +408,9 @@ const Model = ({
                 height={100}
                 width={100}
                 className=" w-5 h-auto cursor-pointer"
-                onClick={() => briefcaseClick(params.data)}
+                onClick={() => briefcaseClick(params.row)}
                 unoptimized
+                style={{ marginTop: "10px" }}
               ></Image>
             )}
           </div>
@@ -408,7 +422,7 @@ const Model = ({
     {
       headerName: "Like",
       field: "liked",
-      cellRenderer: (params) => {
+      renderCell: (params) => {
         return (
           <div>
             {params.value ? (
@@ -417,7 +431,7 @@ const Model = ({
                 src={`${BUCKET_URL}/stalls/like.svg`}
                 height={200}
                 width={200}
-                className=" w-5 h-auto cursor-pointer"
+                className=" w-5 h-auto cursor-pointer mt-3"
                 unoptimized
               ></Image>
             ) : (
@@ -426,8 +440,8 @@ const Model = ({
                 src={`${BUCKET_URL}/stalls/unlike.svg`}
                 height={200}
                 width={200}
-                className=" w-5 h-auto cursor-pointer"
-                onClick={() => likeClick(params.data)}
+                className=" w-5 h-auto cursor-pointer mt-3"
+                onClick={() => likeClick(params.row)}
                 unoptimized
               ></Image>
             )}
@@ -440,12 +454,12 @@ const Model = ({
     {
       headerName: "Review",
       field: "review",
-      cellRenderer: (params) => {
+      renderCell: (params) => {
         return (
           <>
             {params.value ? (
               <StarRatingComponent
-                name={params.data._id}
+                name={params.row._id}
                 value={params.value || 0}
                 starCount={5}
                 starColor={"#ffb400"}
@@ -453,7 +467,7 @@ const Model = ({
               />
             ) : (
               <StarRatingComponent
-                name={params.data._id}
+                name={params.row._id}
                 value={params.value || 0}
                 onStarClick={(nextValue) =>
                   handleRatingClick(params, nextValue)
@@ -477,23 +491,21 @@ const Model = ({
       field: "title",
       filter: true,
       width: 300,
-      flex: 3,
-      minWidth: 350,
     },
     {
       headerName: "File",
       field: "url",
       filter: true,
       width: 100,
-      cellRenderer: (params) => {
+      renderCell: (params) => {
         return (
           <Image
             alt="pdf file"
             width={200}
             height={200}
             src={`${BUCKET_URL}/PDF_file_icon.svg`}
-            className="h-auto w-5 mx-auto my-auto cursor-pointer"
-            onClick={() => imageclick(params.data)}
+            className="h-auto w-5 my-auto cursor-pointer mt-3"
+            onClick={() => imageclick(params.row)}
           />
         );
       },
@@ -516,14 +528,14 @@ const Model = ({
       field: "url",
       filter: true,
       width: 100,
-      cellRenderer: (params) => {
+      renderCell: (params) => {
         return (
           <Image
             alt="youtube video"
             width={200}
             height={200}
             src={`${BUCKET_URL}/youtube.png`}
-            className="h-auto w-5 mx-auto my-auto cursor-pointer"
+            className="h-auto w-5 mx-auto my-auto cursor-pointer mt-3"
             onClick={() => yotubeIconClick(params.value)}
             unoptimized
           />
@@ -546,7 +558,7 @@ const Model = ({
         setRowData(productdata);
         setColumnDefs(productColumnDef);
         break;
-      case "breifcase":
+      case "briefcase":
         SetHeaderName("Brief Case");
         setRowData(briefcaseData);
         setColumnDefs(briefcaseColumnDef);
@@ -580,8 +592,8 @@ const Model = ({
   return (
     <>
       <div className="w-full h-[100%] bg-white fixed left-0 right-0 top-0 bottom-0 z-[400] mx-auto my-auto flex flex-col justify-center items-start">
-        <div className=" headerDiv w-full h-20 flex justify-between items-center bg-[#222222] text-white text-lg font-lato  px-8">
-          <p className=" header text-2xl font-lato font-bold">{headerName}</p>
+        <div className=" headerDiv w-full md:h-20 sm:h-14 mb-1 flex justify-between items-center bg-[#222222] text-white text-lg font-lato  px-8">
+          <p className=" header md:text-2xl sm:text-xl font-lato font-bold">{headerName}</p>
           <div
             onClick={() => handleModelClose()}
             className=" w-6 h-6 p-2 rounded-full bg-brand-color cursor-pointer"
@@ -596,13 +608,30 @@ const Model = ({
             ></Image>
           </div>
         </div>
-        <div className="ag-theme-alpine h-full gridContainer w-full ">
-          <AgGridReact
-            rowData={rowData}
-            columnDefs={columnDefs}
-            rowHeight={50}
-            autoSizeColumns={true}
-          ></AgGridReact>
+        <div className="ag-theme-alpine h-full gridContainer w-full overflow-y-scroll px-4">
+          {
+            headerName == "Brief Case" ?
+              <CommonDataTableView
+                columns={columnDefs}
+                rowData={rowData}
+                imageclick={imageclick}
+                requestFileButton={requestFileButton}
+                handleDownload={handleDownload}
+              />
+              :
+              <CommonProductDataTableView
+                columns={columnDefs}
+                rowData={rowData}
+                filename={""}
+                imageclick={imageclick}
+                headerName={headerName}
+                yotubeIconClick={yotubeIconClick}
+                likeClick={likeClick}
+                handleRatingClick={handleRatingClick}
+                briefcaseClick={briefcaseClick}
+              />
+          }
+
         </div>
       </div>
       {openPdf ? (

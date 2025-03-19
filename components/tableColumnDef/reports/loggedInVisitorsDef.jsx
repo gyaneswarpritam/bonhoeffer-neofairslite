@@ -25,7 +25,7 @@ export const LoggedInVisitorsDef = [
     field: "loggedInTime",
     filter: true,
     width: 250,
-    valueFormatter: (params) => dayjsShortFormat(params.value),
+    valueFormatter: (params) => dayjsShortFormat(params),
   },
   { headerName: "LoggedIn IP", field: "loggedInIP", filter: true, width: 150 },
 ];

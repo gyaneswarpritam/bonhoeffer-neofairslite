@@ -38,7 +38,7 @@ export default function Visitors() {
         </div>
         <div className="divider w-[100%] mt-2"></div>
 
-        <div className="h-[90vh]">
+        <div className="h-auto">
           <VisitorApprovalListComponent status={status} />
         </div>
       </div>

@@ -25,21 +25,21 @@ function PdfViewer(pdfFile) {
   }
   return (
     <>
-      <div className=" w-full h-20 flex justify-center items-center gap-10">
+      <div className=" w-full h-10 flex justify-center items-center gap-1 fixed z-40">
         <button
-          className=" border-0 h-full aspect-square bg-accent-font-color text-white rounded-full p-3 text-base font-bold cursor-pointer"
+          className=" border-0 h-full aspect-square bg-accent-font-color text-white rounded-full p-1 text-base font-bold cursor-pointer"
           onClick={handleZoomIn}
         >
           +
         </button>
         <button
-          className=" border-0 h-full aspect-square bg-accent-font-color text-white rounded-full p-3 text-base font-bold cursor-pointer"
+          className=" border-0 h-full aspect-square bg-accent-font-color text-white rounded-full p-1 text-base font-bold cursor-pointer"
           onClick={handleZoomOut}
         >
           -
         </button>
       </div>
-      <div className="flex justify-center items-center">
+      <div className="flex justify-center items-center mt-10">
         <Document
           file={pdfFile.file ? pdfFile.file : "/sample.pdf"}
           onLoadSuccess={onDocumentLoadSuccess}

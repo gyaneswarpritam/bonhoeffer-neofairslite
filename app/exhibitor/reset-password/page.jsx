@@ -1,12 +1,13 @@
 "use client";
-import { request } from "@/lib/axios";
+import "../../globals.css";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { request, requestWithStatus } from "@/lib/axios";
 
 const Page = () => {
   const exhibitorId =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
   const {
     register,
     handleSubmit,
@@ -53,7 +54,7 @@ const Page = () => {
     }
 
     try {
-      const res = await request({
+      requestWithStatus({
         url: `exhibitor/reset-password`,
         method: "post",
         data: {
@@ -61,10 +62,24 @@ const Page = () => {
           newPassword,
           exhibitorId,
         },
-      });
-      toast.success("Password reset successully", {
-        position: toast.POSITION.TOP_RIGHT,
-      });
+      })
+        .then((res) => {
+          if (res.status == 200) {
+            toast.success(res.message, {
+              position: toast.POSITION.TOP_RIGHT,
+            });
+          } else {
+            toast.error(res.message, {
+              position: toast.POSITION.TOP_RIGHT,
+            });
+          }
+        })
+        .catch((e) => {
+          toast.error("Old password is incorrect. Unable to reset Password", {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        });
+
       setServerError("");
       reset(); // Reset form fields after successful submission
     } catch (error) {
@@ -139,13 +154,6 @@ const Page = () => {
             className="mt-10 bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto"
           >
             Reset Password
-          </button>
-          <button
-            onClick={() => setFromLink(false)}
-            type="button"
-            className="ml-4 mt-10 bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto"
-          >
-            Close
           </button>
         </form>
       </div>

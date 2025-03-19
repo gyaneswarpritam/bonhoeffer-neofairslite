@@ -5,6 +5,14 @@ import axios from "axios";
 import { BASE_URL, BUCKET_URL } from "@/config/constant";
 import { v4 as uuidv4 } from "uuid";
 import { io } from "socket.io-client";
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import isToday from 'dayjs/plugin/isToday';
+import isYesterday from 'dayjs/plugin/isYesterday';
+
+dayjs.extend(relativeTime);
+dayjs.extend(isToday);
+dayjs.extend(isYesterday);
 
 const ExhibitorChatContainer = ({
   displayName,
@@ -17,7 +25,7 @@ const ExhibitorChatContainer = ({
   const [messages, setMessages] = useState([]);
   const scrollRef = useRef();
   const [arrivalMessage, setArrivalMessage] = useState(null);
-  const visitorId = sessionStorage.getItem("id");
+  const visitorId = localStorage.getItem("id");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,29 +97,23 @@ const ExhibitorChatContainer = ({
     handleSendMsg(inputValue);
     setInputValue("");
   };
+
+  const formatDate = (date) => {
+    const d = dayjs(date);
+
+    if (d.isToday()) {
+      return d.format('h:mm A'); // Show only time if today
+    } else if (d.isYesterday()) {
+      return 'Yesterday';
+    } else {
+      return d.format('MMM D, YYYY h:mm A'); // Show full date for other cases
+    }
+  };
+
   return (
-    <div className="w-full max-w-[75%] h-full flex flex-col">
-      <div className="pl-5 mr-5 min-h-[48px] flex items-center justify-between border-b">
-        <h1 className="text-xl font-bold font-lato">
-          {displayName !== "Groups" ? `Chat With ${displayName}` : displayName}
-        </h1>
-        <div
-          className="bg-brand-color w-8 aspect-square h-auto rounded-full flex justify-center items-center cursor-pointer"
-          onClick={handleClose}
-        >
-          <Image
-            src={`${BUCKET_URL}/chat/close.svg`}
-            width={3000}
-            height={3000}
-            className="w-4 aspect-square h-auto"
-          />
-        </div>
-      </div>
-      <div className="pt-3 px-4 mb-5 h-full overflow-auto flex flex-col justify-start items-start gap-[10px]">
+    <div className="w-full max-w-full h-full flex flex-col">
+      <div className="pt-3 px-4 h-[80vh] overflow-auto flex flex-col justify-start items-start gap-[10px]">
         <div className="w-full">
-          <p className="text-center font-semibold font-quickSand text-xs text-[#5E6672]">
-            Monday • 21-02-23
-          </p>
         </div>
         {messages &&
           messages.map((message, index) => (
@@ -124,19 +126,19 @@ const ExhibitorChatContainer = ({
                 <div className="max-w-sm ml-auto">
                   <p className="bg-white border border-static-black rounded-2xl px-4 py-2 text-base text-black font-semibold overflow-hidden">
                     {message.message}
-                    <span className="font-medium font-quickSand text-[10px] float-right align-bottom ml-2 leading-[10px] mt-3">
-                      {/* {time} */}
-                    </span>
                   </p>
+                  <span className="font-medium font-quickSand text-[10px] float-right align-bottom ml-2 leading-[10px] mt-3">
+                    {formatDate(message?.time)}
+                  </span>
                 </div>
               ) : (
                 <div className="max-w-sm">
                   <p className="bg-brand-color rounded-2xl px-4 py-2 text-base text-black font-semibold overflow-hidden">
                     {message.message}
-                    <span className="font-medium font-quickSand text-[10px] float-right align-bottom ml-2 leading-[10px] mt-3">
-                      {/* {time} */}
-                    </span>
                   </p>
+                  <span className="font-medium font-quickSand text-[10px] float-right align-bottom ml-2 leading-[10px] mt-3">
+                    {formatDate(message.time)}
+                  </span>
                 </div>
               )}
             </div>

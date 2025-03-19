@@ -35,7 +35,7 @@ const SettingTabs = () => {
   }
   const plusImage = `${BUCKET_URL}/stalls/plus.svg`;
   const exhibitorId =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
   const [tab, setTab] = useState(1);
   const [confirm, setConfirm] = useState(false);
   const [uploadPromises, setUploadPromises] = useState([]);
@@ -62,6 +62,7 @@ const SettingTabs = () => {
       facebook: "",
       twitter: "",
       website: "",
+      instagram: "",
     },
     stallImage: "",
     stallLogo: "",
@@ -107,6 +108,7 @@ const SettingTabs = () => {
   const [editStallVideo, setEditStallVideo] = useState(true);
 
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [isVideo, setIsVideo] = useState(false);
 
   const uploadInput = useRef(null);
   const [numberObject, setNumberObject] = useState([
@@ -161,6 +163,7 @@ const SettingTabs = () => {
           facebook: stallData.stall.social_media.facebook,
           twitter: stallData.stall.social_media.twitter,
           website: stallData.stall.social_media.website,
+          instagram: stallData.stall.social_media.instagram,
         },
         stallImage: stallData.stall.stallImage,
         stallLogo: stallData.stall.stallLogo,
@@ -170,7 +173,6 @@ const SettingTabs = () => {
         galleryImageList: stallData.galleryImageList,
         galleryVideoList: stallData.galleryVideoList,
         stallVideoList: stallData.stallVideoList,
-        stallBackgroundImage: stallData.stall.stallBackgroundImage,
         stallVideoLink: stallData.stall.stallVideoLink,
       });
       // setSelectedCertifications(stallData.stall.certifications || []);
@@ -727,8 +729,10 @@ const SettingTabs = () => {
     }
   };
   const openImage = (url, imageName) => {
+    const isVideo = /\.(mp4|webm|ogg)$/i.test(url); // Check if the file is a video
     SetImageFile(url);
     setImageFileModelName(imageName);
+    setIsVideo(isVideo); // New state to track if the file is a video
     setOpenImageModel(true);
   };
   const openCompany = (e) => {
@@ -772,13 +776,6 @@ const SettingTabs = () => {
         ...dataObject,
         [field]: res,
       });
-    });
-  };
-
-  const handleVideoLinkChange = (selectedOption) => {
-    setDataObject({
-      ...dataObject,
-      stallBackgroundImage: selectedOption,
     });
   };
 
@@ -834,7 +831,8 @@ const SettingTabs = () => {
     const newErrors = {};
     const { stallImage, stallLogo, companyLogo } = dataObject;
 
-    if (!stallImage) newErrors.stallImage = "Stall Image is required";
+    if (!stallImage)
+      newErrors.stallImage = "Stall Image / Stall Video is required";
     if (!stallLogo) newErrors.stallLogo = "Stall Logo is required";
     if (!companyLogo) newErrors.companyLogo = "Company Logo is required";
 
@@ -878,12 +876,12 @@ const SettingTabs = () => {
       ) : openImageModel ? (
         <div className="w-full h-[100%] bg-white fixed left-0 right-0 top-0 bottom-0 z-[400] mx-auto my-auto flex flex-col justify-center items-start">
           <div className="w-full h-20 flex justify-between items-center bg-[#222222] px-8">
-            <p className=" font-lato text-xl font-semibold text-white">
+            <p className="font-lato text-xl font-semibold text-white">
               {imageFileModelName}
             </p>
             <div
               onClick={() => closeImageFile()}
-              className=" w-6 h-6 p-2 rounded-full bg-brand-color cursor-pointer"
+              className="w-6 h-6 p-2 rounded-full bg-brand-color cursor-pointer"
             >
               <Image
                 alt="close"
@@ -891,19 +889,27 @@ const SettingTabs = () => {
                 width={100}
                 src={`${BUCKET_URL}/Close.png`}
                 unoptimized
-                className=" w-full h-auto"
+                className="w-full h-auto"
               ></Image>
             </div>
           </div>
           <div className="ag-theme-alpine h-[90%] pb-20 px-10 w-full max-w-5xl m-auto">
-            <Image
-              alt=""
-              src={imageFile}
-              height={400}
-              width={400}
-              className=" h-full w-auto m-auto"
-              unoptimized
-            ></Image>
+            {isVideo ? (
+              <video
+                src={imageFile}
+                controls
+                className="h-full w-auto m-auto"
+              ></video>
+            ) : (
+              <Image
+                alt=""
+                src={imageFile}
+                height={400}
+                width={400}
+                className="h-full w-auto m-auto"
+                unoptimized
+              ></Image>
+            )}
           </div>
         </div>
       ) : (
@@ -951,7 +957,6 @@ const SettingTabs = () => {
                     openImage={openImage}
                     handleFileChange={handleFileChange}
                     errors={errors}
-                    handleVideoLinkChange={handleVideoLinkChange}
                     updateVideoLink={updateVideoLink}
                   />
                 </TabPanel>

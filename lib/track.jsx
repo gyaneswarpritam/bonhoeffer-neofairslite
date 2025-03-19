@@ -5,7 +5,7 @@ export const trackUtil = async (data) => {
   const response = await axios.get("https://api.ipify.org?format=json");
   const userIP = response.data.ip;
   const visitorId =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
   const payload = {
     ...data,
     ip: userIP,
@@ -37,7 +37,7 @@ export const sendEmailMeetingUtil = async (data) => {
   request({
     url: `visitor/book-slot-email`,
     method: "post",
-    data,
+    data: data
   });
 };
 
@@ -46,5 +46,21 @@ export const sendEmailMeetingConfirmationUtil = async (data) => {
     url: `exhibitor/book-slot-email`,
     method: "post",
     data,
+  });
+};
+
+export const sendEmailMeetingNotifyExhibitorUtil = async (data) => {
+  request({
+    url: `exhibitor/notify-meeting`,
+    method: "post",
+    data: data,
+  });
+};
+
+export const sendEmailMeetingNotifyVisitorUtil = async (data) => {
+  request({
+    url: `visitor/notify-meeting`,
+    method: "post",
+    data: data,
   });
 };

@@ -1,9 +1,9 @@
 "use client";
-import CommonReportListComponent from "@/components/admin/CommonReportComponent/CommonReportListComponent";
 import React from "react";
 import { request } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
 import { visitedStallReportDef } from "@/components/tableColumnDef/visitedStallReportDef";
+import CommonDataTable from "@/components/grid/CommonDataTable";
 
 export default function LoggedVisitorReport() {
   const fetchExhibitors = async () => {
@@ -28,8 +28,8 @@ export default function LoggedVisitorReport() {
         </div>
         <div className="divider w-[100%] mt-2"></div>
 
-        <div className="h-[90vh]">
-          <CommonReportListComponent
+        <div className="h-auto">
+          <CommonDataTable
             columns={visitedStallReportDef}
             rowData={data}
             filename={"Visited-Stall-Report"}

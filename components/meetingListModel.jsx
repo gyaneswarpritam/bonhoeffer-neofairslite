@@ -1,18 +1,23 @@
 import React from "react";
 import Image from "next/image";
 import "./contactModel.css";
-import { AgGridReact } from "ag-grid-react";
 import { request } from "@/lib/axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { BUCKET_URL } from "@/config/constant";
 import dayjs from "dayjs";
+import CommonDataTableView from "./grid/CommonDataTableView";
+import Link from "next/link";
 
 const MeetingListModel = ({ rowData, handleClick }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const id =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
+  const role =
+    typeof window !== "undefined" ? localStorage.getItem("role") : null;
+  const stallManagerId =
+    typeof window !== "undefined" ? localStorage.getItem("stallManagerId") : null;
 
   const fetchInstantMeetingData = async () => {
     return request({
@@ -34,10 +39,11 @@ const MeetingListModel = ({ rowData, handleClick }) => {
 
   const { mutate: updateInstantMeeting } = useMutation({
     mutationFn: async (id) => {
+      const approveData = stallManagerId ? { approve: true, inProgress: true, stallManagerId: stallManagerId } : { approve: true, inProgress: true }
       const response = await request({
         url: `exhibitor/instant-meeting/${id}`,
         method: "put",
-        data: { approve: true },
+        data: approveData,
       });
       return { id: response._id };
     },
@@ -52,10 +58,12 @@ const MeetingListModel = ({ rowData, handleClick }) => {
   });
   const { mutate: rejectInstantMeeting } = useMutation({
     mutationFn: async (id) => {
+      const rejectData = stallManagerId ? { rejected: true, stallManagerId: stallManagerId } : { rejected: true }
+
       const response = await request({
         url: `exhibitor/instant-meeting/${id}`,
         method: "put",
-        data: { rejected: true },
+        data: rejectData,
       });
       return { id: response._id };
     },
@@ -76,51 +84,75 @@ const MeetingListModel = ({ rowData, handleClick }) => {
     {
       headerName: "Visitor Name",
       field: "name",
-      filter: true,
       width: 500,
     },
     {
       headerName: "Date & Time",
       field: "updatedAt",
-      filter: true,
       width: 500,
-      cellRenderer: (params) => {
+      renderCell: (params) => {
         return dayjs(params.value).format("DD-MM-YYYY HH:mm");
       },
     },
     {
-      headerName: "Action",
+      headerName: "Meeting Link",
+      field: "meetingLink",
       width: 200,
-      cellRenderer: (params) => {
+      renderCell: (params) => {
         return (
           <>
-            <Image
-              alt="Approve"
-              width={200}
-              height={200}
-              src={`${BUCKET_URL}/admin/isApproved.svg`}
-              className="h-auto w-5 mx-auto my-auto cursor-pointer"
-              onClick={() => approve(params.data)}
-            />
-            <Image
-              alt="Reject"
-              width={200}
-              height={200}
-              src={`${BUCKET_URL}/admin/notApproved.svg`}
-              className="h-auto w-5 mx-auto my-auto cursor-pointer"
-              onClick={() => reject(params.data)}
-            />
+            {params.row.approve ? (
+              <div className="flex justify-around">
+                <Link
+                  href={`/exhibitor/video-chat?id=${params.row._id}`}
+                  className="flex flex-col justify-center items-center cursor-pointer"
+                >
+                  Join Meeting
+                </Link>
+              </div>
+            ) : (
+              <></>
+            )}
           </>
         );
       },
-      flex: 1,
+      minWidth: 150,
+    },
+    {
+      headerName: "Action",
+      width: 200,
+      renderCell: (params) => {
+        return (
+          <>
+            {params.row.approve || params.row.rejected ? <></> : (
+              <div className="flex justify-around mt-2">
+                <Image
+                  alt="Approve"
+                  width={200}
+                  height={200}
+                  src={`${BUCKET_URL}/admin/isApproved.svg`}
+                  className="h-auto w-5 mx-auto my-auto cursor-pointer mr-4"
+                  onClick={() => approve(params.row)}
+                />
+                <Image
+                  alt="Reject"
+                  width={200}
+                  height={200}
+                  src={`${BUCKET_URL}/admin/notApproved.svg`}
+                  className="h-auto w-5 mx-auto my-auto cursor-pointer"
+                  onClick={() => reject(params.row)}
+                />
+              </div>)}
+          </>
+        );
+      },
       minWidth: 150,
     },
   ];
   return (
     <div className="w-full h-[100%] bg-white fixed left-0 right-0 top-0 bottom-0 z-[400] mx-auto my-auto flex flex-col justify-center items-start">
-      <div className=" headerDiv w-full h-20 flex justify-between items-center bg-[#222222] text-white text-lg font-lato  px-8">
-        <p className=" header text-2xl font-lato font-bold">
+      <div className=" headerDiv w-full md:h-20 sm:h-14 mb-1 flex justify-between items-center bg-[#222222] text-white text-lg font-lato  px-8">
+        <p className=" header md:text-2xl sm:text-xl font-lato font-bold">
           Waiting Meeting List
         </p>
         <div
@@ -138,12 +170,11 @@ const MeetingListModel = ({ rowData, handleClick }) => {
         </div>
       </div>
       <div className="ag-theme-alpine h-full gridContainer w-full ">
-        <AgGridReact
+        <CommonDataTableView
+          columns={columnDefs}
           rowData={instantMeeting}
-          columnDefs={columnDefs}
-          rowHeight={50}
-          autoSizeColumns={true}
-        ></AgGridReact>
+          filename={""}
+        />
       </div>
     </div>
   );

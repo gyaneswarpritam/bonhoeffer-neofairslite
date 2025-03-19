@@ -45,6 +45,6 @@ export const visitedStallDef = [
     flex: 1,
     minWidth: 300,
     autoHeight: true,
-    valueFormatter: (params) => dayjsShortFormat(params.value),
+    valueFormatter: (params) => dayjsShortFormat(params),
   },
 ];

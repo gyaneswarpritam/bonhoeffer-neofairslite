@@ -14,9 +14,9 @@ import {
   modelOpen,
 } from "@/GlobalRedux/features/dialogs/dialogSlice";
 import Model from "@/components/visitor/model";
-import { request } from "@/lib/axios";
+import { request, requestWithStatus } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
-import { trackUtil } from "@/lib/track";
+import { sendEmailMeetingNotifyVisitorUtil, trackUtil } from "@/lib/track";
 import ConfirmModel from "@/components/confirmModel";
 import { notificationVisitorUtil } from "@/lib/notification";
 import { BUCKET_URL } from "@/config/constant";
@@ -39,9 +39,9 @@ import Support from "@/components/visitor/lite/Support";
 
 const StallViewComponent = () => {
   const visitorId =
-    typeof window !== "undefined" ? sessionStorage.getItem("id") : null;
+    typeof window !== "undefined" ? localStorage.getItem("id") : null;
   const visitorName =
-    typeof window !== "undefined" ? sessionStorage.getItem("name") : null;
+    typeof window !== "undefined" ? localStorage.getItem("name") : null;
 
   const [totalUnreadMessages, setTotalUnreadMessages] = useState(0);
   /*Stall*/
@@ -262,7 +262,7 @@ const StallViewComponent = () => {
     } else {
       setDevice("desktop");
     }
-    return () => {};
+    return () => { };
   }, []);
 
   useEffect(() => {
@@ -315,6 +315,10 @@ const StallViewComponent = () => {
   const handleConfirm = () => {
     setConfirmOpen(false);
     requestForCancelledInstantMeeting();
+  };
+
+  const handleCloseModal = () => {
+    setConfirmOpen(false);
   };
   const openGallery = () => {
     setGalleryModel(true);
@@ -373,7 +377,7 @@ const StallViewComponent = () => {
 
     if (userConfirmed) {
       request({ url: `visitor/logout/${visitorId}`, method: "get" });
-      sessionStorage.clear();
+      localStorage.clear();
       router.push("/");
     }
   };
@@ -492,7 +496,7 @@ const StallViewComponent = () => {
     }
 
     try {
-      request({
+      requestWithStatus({
         url: `visitor/reset-password`,
         method: "post",
         data: {
@@ -501,9 +505,15 @@ const StallViewComponent = () => {
           visitorId,
         },
       }).then((res) => {
-        toast.success("Password reset successully", {
-          position: toast.POSITION.TOP_RIGHT,
-        });
+        if (res?.status == 200) {
+          toast.success(res.message, {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        } else {
+          toast.error(res.message, {
+            position: toast.POSITION.TOP_RIGHT,
+          });
+        }
       });
       setServerError("");
       reset(); // Reset form fields after successful submission
@@ -528,6 +538,79 @@ const StallViewComponent = () => {
     setAuditoriumModelOpen(false);
   };
 
+  // const checkForUpcomingMeetings = () => {
+  //   if (bookedSlots && bookedSlots.length) {
+  //     const notifiedMeetings = {}; // Track notifications for each slot
+
+  //     const intervalId = setInterval(() => {
+  //       const now = new Date();
+
+  //       bookedSlots.forEach((slot) => {
+  //         // Combine Date and Time fields from the slot and parse the timezone
+  //         const meetingDateTime = `${slot.Date} ${slot.Time.replace(
+  //           " PM",
+  //           "PM"
+  //         ).replace(" AM", "AM")}`;
+  //         const meetingTime = moment
+  //           .tz(meetingDateTime, "YYYY-MM-DD hh:mm A", slot.Timezone)
+  //           .toDate();
+
+  //         const timeDiff = meetingTime - now;
+
+  //         // If the meeting is 'booked' and still has time
+  //         if (timeDiff > 0 && slot.Status === "booked") {
+  //           const minutesLeft = Math.floor(timeDiff / (1000 * 60)); // Convert to minutes
+
+  //           // Notify at 30 minutes if not already notified for this slot
+  //           if (
+  //             minutesLeft <= 30 &&
+  //             minutesLeft > 15 &&
+  //             !notifiedMeetings[slot.SerialNo]?.notifiedAt30
+  //           ) {
+  //             setMessageModelOpen(true);
+  //             setMessageBody(
+  //               `Meeting starts in ${minutesLeft} minutes, please be available.`
+  //             );
+
+  //             // Mark as notified for the 30-minute mark
+  //             notifiedMeetings[slot.SerialNo] = {
+  //               ...notifiedMeetings[slot.SerialNo],
+  //               notifiedAt30: true,
+  //             };
+  //             sendEmailMeetingNotifyVisitorUtil({ visitorId, exhibitorId: slot.ExhibitorId, slotDetails: slot, minutesLeft });
+  //           }
+
+  //           // Notify at 15 minutes if not already notified for this slot
+  //           if (
+  //             minutesLeft <= 15 &&
+  //             !notifiedMeetings[slot.SerialNo]?.notifiedAt15
+  //           ) {
+  //             setMessageModelOpen(true);
+  //             setMessageBody(
+  //               `Meeting starts in ${minutesLeft} minutes, please be available.`
+  //             );
+
+  //             // Mark as notified for the 15-minute mark
+  //             notifiedMeetings[slot.SerialNo] = {
+  //               ...notifiedMeetings[slot.SerialNo],
+  //               notifiedAt15: true,
+  //             };
+  //           }
+
+  //           // Clear the interval if both notifications have been sent for the slot
+  //           if (
+  //             notifiedMeetings[slot.SerialNo]?.notifiedAt30 &&
+  //             notifiedMeetings[slot.SerialNo]?.notifiedAt15
+  //           ) {
+  //             clearInterval(intervalId);
+  //           }
+  //           sendEmailMeetingNotifyVisitorUtil({ visitorId, exhibitorId: slot.ExhibitorId, slotDetails: slot, minutesLeft });
+  //         }
+  //       });
+  //     }, 60 * 1000); // Check every minute
+  //   }
+  // };
+
   const checkForUpcomingMeetings = () => {
     if (bookedSlots && bookedSlots.length) {
       const notifiedMeetings = {}; // Track notifications for each slot
@@ -546,57 +629,63 @@ const StallViewComponent = () => {
             .toDate();
 
           const timeDiff = meetingTime - now;
+          const minutesLeft = Math.floor(timeDiff / (1000 * 60)); // Convert to minutes
 
-          // If the meeting is 'booked' and still has time
           if (timeDiff > 0 && slot.Status === "booked") {
-            const minutesLeft = Math.floor(timeDiff / (1000 * 60)); // Convert to minutes
-
-            // Notify at 30 minutes if not already notified for this slot
-            if (
-              minutesLeft <= 30 &&
-              minutesLeft > 15 &&
-              !notifiedMeetings[slot.SerialNo]?.notifiedAt30
-            ) {
-              setMessageModelOpen(true);
-              setMessageBody(
-                `Meeting starts in ${minutesLeft} minutes, please be available.`
-              );
-
-              // Mark as notified for the 30-minute mark
+            // Initialize tracking if not already present
+            if (!notifiedMeetings[slot.SerialNo]) {
               notifiedMeetings[slot.SerialNo] = {
-                ...notifiedMeetings[slot.SerialNo],
-                notifiedAt30: true,
+                notifiedAt60: false,
+                notifiedAt30: false,
+                notifiedAt0: false,
               };
             }
 
-            // Notify at 15 minutes if not already notified for this slot
-            if (
-              minutesLeft <= 15 &&
-              !notifiedMeetings[slot.SerialNo]?.notifiedAt15
-            ) {
-              setMessageModelOpen(true);
-              setMessageBody(
-                `Meeting starts in ${minutesLeft} minutes, please be available.`
-              );
-
-              // Mark as notified for the 15-minute mark
-              notifiedMeetings[slot.SerialNo] = {
-                ...notifiedMeetings[slot.SerialNo],
-                notifiedAt15: true,
-              };
+            // Notify at 60 minutes if not already notified
+            if (minutesLeft <= 60 && minutesLeft > 30 && !notifiedMeetings[slot.SerialNo].notifiedAt60) {
+              sendNotification(slot, minutesLeft);
+              notifiedMeetings[slot.SerialNo].notifiedAt60 = true;
             }
 
-            // Clear the interval if both notifications have been sent for the slot
-            if (
-              notifiedMeetings[slot.SerialNo]?.notifiedAt30 &&
-              notifiedMeetings[slot.SerialNo]?.notifiedAt15
-            ) {
-              clearInterval(intervalId);
+            // Notify at 30 minutes if not already notified
+            if (minutesLeft <= 30 && minutesLeft > 0 && !notifiedMeetings[slot.SerialNo].notifiedAt30) {
+              sendNotification(slot, minutesLeft);
+              notifiedMeetings[slot.SerialNo].notifiedAt30 = true;
+            }
+
+            // Notify at 0 minutes if not already notified
+            if (minutesLeft <= 0 && !notifiedMeetings[slot.SerialNo].notifiedAt0) {
+              sendNotification(slot, minutesLeft);
+              notifiedMeetings[slot.SerialNo].notifiedAt0 = true;
             }
           }
         });
+
+        // Check if all notifications have been sent for all slots, then clear interval
+        const allNotified = bookedSlots.every(
+          (slot) =>
+            notifiedMeetings[slot.SerialNo]?.notifiedAt60 &&
+            notifiedMeetings[slot.SerialNo]?.notifiedAt30 &&
+            notifiedMeetings[slot.SerialNo]?.notifiedAt0
+        );
+
+        if (allNotified) {
+          clearInterval(intervalId);
+        }
       }, 60 * 1000); // Check every minute
     }
+  };
+
+  // Helper function to send notifications
+  const sendNotification = (slot, minutesLeft) => {
+    setMessageModelOpen(true);
+    setMessageBody(`Meeting starts in ${minutesLeft} minutes, please be available.`);
+    sendEmailMeetingNotifyVisitorUtil({
+      visitorId,
+      exhibitorId: slot.ExhibitorId,
+      slotDetails: slot,
+      minutesLeft,
+    });
   };
 
   const handleModelClose = (e) => {
@@ -653,8 +742,8 @@ const StallViewComponent = () => {
       minWidth: 200,
       flex: 1,
       autoHeight: true,
-      cellRenderer: (params) => {
-        const status = params.data.Status;
+      renderCell: (params) => {
+        const status = params.row.Status;
         if (status === "booked") {
           return settingsData &&
             settingsData[0] &&
@@ -663,17 +752,17 @@ const StallViewComponent = () => {
               href={settingsData[0]?.customVideoLink}
               target="_blank"
               rel="noopener noreferrer"
-              style={{ color: "blue" }}
+              style={{ color: "blue", cursor: "pointer" }}
             >
-              Open Link
+              Join Meeting
             </a>
           ) : (
             <a
               onClick={requestForInstantMeeting}
               rel="noopener noreferrer"
-              style={{ color: "blue" }}
+              style={{ color: "blue", cursor: "pointer" }}
             >
-              Open Link
+              Join Meeting
             </a>
           );
         }
@@ -687,12 +776,12 @@ const StallViewComponent = () => {
       minWidth: 200,
       flex: 1,
       autoHeight: true,
-      cellRenderer: (params) =>
+      renderCell: (params) =>
         params.value == "pending"
           ? "Pending"
           : params.value == "rejected"
-          ? "Declined"
-          : "Booked",
+            ? "Declined"
+            : "Booked",
     },
   ];
 
@@ -767,7 +856,7 @@ const StallViewComponent = () => {
     setAuditoriumModelOpen(true);
   };
   return (
-    <main className="w-full h-auto overflow-hidden relative">
+    <main className="w-full h-auto overflow-auto relative">
       {isModelOpen ? (
         <Model
           productdata={stallData.productsList}
@@ -782,6 +871,7 @@ const StallViewComponent = () => {
       {confirmOpen ? (
         <ConfirmModel
           handleClick={handleConfirm}
+          handleClose={handleCloseModal}
           meetingId={meetingId}
           instantMeetingData={instantMeeting}
         />
@@ -810,60 +900,36 @@ const StallViewComponent = () => {
       ) : galleryModel ? (
         <GalleryModel
           handleClose={closeGallery}
-          galleryImages={stallData.galleryImageList}
+          galleryImages={[
+            ...stallData.galleryImageList.map((image) => ({
+              ...image,
+              type: "image",
+            })),
+            ...stallData.galleryVideoList.map((video) => ({
+              ...video,
+              type: "video",
+            })),
+          ]}
         ></GalleryModel>
       ) : (
         ""
       )}
-      <div className=" hidden scroll-icon fixed bottom-5 right-5 z-10">
-        <Image
-          alt="img"
-          src={`${BUCKET_URL}/stall-view/scroll-down.svg`}
-          width={100}
-          height={100}
-          className="w-16 h-16"
-          onClick={() => {
-            window.scrollTo({
-              top: document.body.scrollHeight,
-              behavior: "smooth",
-            });
-          }}
-        ></Image>
-      </div>
       {stallData && (
         <section
-          className={`bg-[#808080] w-full mx-auto relative md:pt-0 pb-24 md:pb-12 lg:pb-3 overflow-x-hidden lg:h-screen flex flex-col gap-[1.25rem] ${
-            device === "tablet" ? "!h-auto" : ""
-          }`}
+          className={`bg-[#808080] w-full mx-auto relative md:pt-0  md:pb-12 lg:pb-3 overflow-x-hidden lg:h-screen flex flex-col gap-[1.25rem] ${device === "tablet" ? "!h-auto" : ""
+            }`}
           id="main-content-body"
           style={{ overflow: "hidden" }}
         >
-          {stallList &&
-          stallList.length &&
-          stallList[0]?.stallBackgroundImage ? (
-            <Image
-              alt="img"
-              ref={image}
-              src={stallData?.stall?.stallImage}
-              width={3000}
-              height={3000}
-              className="w-full h-screen object-cover object-center"
-              unoptimized
-              blurDataURL={`${BUCKET_URL}/blurred.svg`}
-            ></Image>
-          ) : (
+          {/\.(mp4|webm|ogg)$/i.test(stallData?.stall?.stallImage) ? (
             <div
               style={{
                 position: "relative",
-                height: "100vh",
+                height: "88vh",
                 width: "100%",
                 zIndex: 0,
               }}
             >
-              {/* <div className="video-container">
-                <div id="player"></div>
-                <div className="overlay"></div>
-              </div> */}
               <video
                 style={{
                   position: "absolute",
@@ -885,6 +951,17 @@ const StallViewComponent = () => {
                 Your browser does not support the video tag.
               </video>
             </div>
+          ) : (
+            <Image
+              alt="img"
+              ref={image}
+              src={stallData?.stall?.stallImage}
+              width={3000}
+              height={3000}
+              className="w-full h-screen object-cover object-center"
+              unoptimized
+              blurDataURL={`${BUCKET_URL}/blurred.svg`}
+            ></Image>
           )}
 
           {/* <div className=" w-[80%] h-auto mx-auto text-center flex flex-col justify-center items-center">
@@ -966,7 +1043,7 @@ const StallViewComponent = () => {
                       width={3000}
                       height={3000}
                       className=" w-6 h-6"
-                      src={`${BUCKET_URL}/stall-view/twitter.svg`}
+                      src={`${BUCKET_URL}/social/x.svg`}
                     ></Image>
                     <p className=" text-xs font-quickSand font-bold mt-[2px]">
                       Twitter1
@@ -1030,7 +1107,7 @@ const StallViewComponent = () => {
           {
             // device === "desktop" ? (
             <>
-              <div className=" fixed z-[20] top-1/2 -translate-y-1/2 left-0 nav-wrapper left md:px-4 md:py-4 sm:px-4 sm:py-2 flex flex-col md:gap-6 sm:gap-3 bg-black">
+              <div className=" fixed z-[20] top-1/2 sm:top-1/3 -translate-y-1/2 sm:-translate-y-1/3 left-0 nav-wrapper left md:px-4 md:py-4 sm:px-1 sm:py-1 flex flex-col md:gap-6 sm:gap-0 bg-black">
                 <div
                   onClick={() => handleModelopen("product")}
                   className=" max-w-[45px] flex flex-col justify-center items-center cursor-pointer"
@@ -1127,11 +1204,11 @@ const StallViewComponent = () => {
                   )}
                 </div>
               </div>
-              <div className=" fixed z-[20] top-1/2 -translate-y-1/2 right-0 nav-wrapper right md:px-4 md:py-4 sm:px-4 sm:py-2 flex flex-col md:gap-6 sm:gap-3 bg-black">
+              <div className=" fixed z-[20] top-1/2 sm:top-1/3 -translate-y-1/2 sm:-translate-y-1/3 right-0 nav-wrapper right md:px-4 md:py-4 sm:px-1 sm:py-1 flex flex-col md:gap-6 sm:gap-0 bg-black">
                 <div
                   className=" max-w-[45px] flex flex-col justify-center items-center cursor-pointer"
                   onClick={() => requestForInstantMeeting()}
-                  // onClick={() => router.push(`/visitor/video-chat?id=${id}`)}
+                // onClick={() => router.push(`/visitor/video-chat?id=${id}`)}
                 >
                   <div className=" w-10 h-10 p-2 bg-[#23272D] rounded-md">
                     <Image
@@ -1185,7 +1262,7 @@ const StallViewComponent = () => {
                   </div>
                   {!isMobile && (
                     <p className=" text-xs font-quickSand font-bold mt-1 text-center text-white">
-                      Show Bookings
+                      Show Meetings
                     </p>
                   )}
                 </div>
@@ -1220,13 +1297,13 @@ const StallViewComponent = () => {
                 </div>
                 <div
                   className=" max-w-[45px] flex flex-col justify-center items-center cursor-pointer"
-                  onClick={() => handleModelopen("breifcase")}
+                  onClick={() => handleModelopen("briefcase")}
                 >
                   <div className=" w-10 h-10 p-2 bg-[#23272D] rounded-md">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="22"
-                      height="22"
+                      width="32"
+                      height="32"
                       viewBox="0 0 22 22"
                     >
                       <g
@@ -1474,7 +1551,7 @@ const StallViewComponent = () => {
             //               width={3000}
             //               height={3000}
             //               className=" w-6 h-6"
-            //               src={`${BUCKET_URL}/stall-view/twitter.svg`}
+            //               src={`${BUCKET_URL}/social/x.svg`}
             //             ></Image>
             //             {/* <p className=" text-xs font-quickSand font-bold mt-[2px]">
             //               Twitter
@@ -1596,7 +1673,7 @@ const StallViewComponent = () => {
             //               width={3000}
             //               height={3000}
             //               className=" w-6 h-6"
-            //               src={`${BUCKET_URL}/stall-view/twitter.svg`}
+            //               src={`${BUCKET_URL}/social/x.svg`}
             //             ></Image>
             //             {/* <p className=" text-xs font-quickSand font-bold mt-[2px]">
             //               Twitter
@@ -1785,6 +1862,28 @@ const StallViewComponent = () => {
                 )}
               {stallData.stall &&
                 stallData.stall.social_media &&
+                stallData.stall.social_media.linkedin && (
+                  <a
+                    href={stallData.stall.social_media.linkedin}
+                    target="_blank"
+                    className="flex flex-col justify-center items-center cursor-pointer"
+                  >
+                    <Image
+                      alt="img"
+                      width={3000}
+                      height={3000}
+                      className=" w-6 h-6"
+                      src={`${BUCKET_URL}/stall-view/linkedin.svg`}
+                    ></Image>
+                    {!isMobile && (
+                      <p className=" text-xs font-quickSand font-bold mt-[2px] text-white">
+                        Linkedin
+                      </p>
+                    )}
+                  </a>
+                )}
+              {stallData.stall &&
+                stallData.stall.social_media &&
                 stallData.stall.social_media.twitter && (
                   <a
                     href={stallData.stall.social_media.twitter}
@@ -1796,7 +1895,7 @@ const StallViewComponent = () => {
                       width={3000}
                       height={3000}
                       className=" w-6 h-6"
-                      src={`${BUCKET_URL}/stall-view/twitter.svg`}
+                      src={`${BUCKET_URL}/social/x.svg`}
                     ></Image>
                     {!isMobile && (
                       <p className=" text-xs font-quickSand font-bold mt-[2px] text-white">
@@ -1857,7 +1956,7 @@ const StallViewComponent = () => {
           {
             // device === "desktop" && height < 150 ? (
             <>
-              <div className=" fixed z-[20] bottom-0 right-0 nav-wrapper bottom1 px-4 py-2 flex flex-row gap-6 bg-black">
+              <div className=" fixed z-[20] bottom-0 right-0 nav-wrapper bottom1 px-4 py-2 flex flex-row gap-6 bg-black" style={{ position: "absolute" }}>
                 <div
                   onClick={logout}
                   className="flex flex-col justify-center items-center cursor-pointer"
@@ -1877,7 +1976,7 @@ const StallViewComponent = () => {
                   )}
                 </div>
               </div>
-              <div className=" fixed z-[20] bottom-0 right-28 nav-wrapper bottom2 px-4 py-2 flex flex-row gap-6 bg-black">
+              <div className=" fixed z-[20] bottom-0 right-28 nav-wrapper bottom2 px-4 py-2 flex flex-row gap-6 bg-black" style={{ position: "absolute" }}>
                 <div
                   onClick={() => changeAuditorium()}
                   className="flex flex-col justify-center items-center cursor-pointer"
@@ -1897,7 +1996,7 @@ const StallViewComponent = () => {
                   )}
                 </div>
               </div>
-              <div className=" fixed z-[20] bottom-0 left-0 nav-wrapper left1 px-3 py-2 flex flex-row gap-6 bg-black">
+              <div className=" fixed z-[20] bottom-0 left-0 nav-wrapper left1 px-3 py-2 flex flex-row gap-6 bg-black" style={{ position: "absolute" }}>
                 <div
                   onClick={() => setFromLink(!fromLink)}
                   className="flex flex-col justify-center items-center cursor-pointer"
@@ -2008,7 +2107,7 @@ const StallViewComponent = () => {
       {chatView ? (
         <VisitorChatModal
           handleClose={handleClose}
-          exhibitorId={stallData.stall.exhibitor}
+          exhibitorId={stallData?.stall?.exhibitor}
         />
       ) : (
         ""
@@ -2027,11 +2126,11 @@ const StallViewComponent = () => {
         <div className=" bg-[#000000]/[.89] w-full h-[100dvh] absolute z-[1001] flex justify-center items-center top-0">
           <div
             // style={{ overflow: "hidden", transition: "height 0.3s ease-in-out" }}
-            className="modelDiv text-white mx-5 h-auto max-h-[90%] overflow-y-auto bg-white rounded-[20px] w-full max-w-[470px] md:p-[30px] p-5"
+            className="modelDiv text-white mx-5 h-auto max-h-[90%]  bg-white rounded-[20px] w-full max-w-[470px] md:p-[30px] px-6 py-2"
           >
             {!resetBtn ? (
               <form onSubmit={handleSubmit(onSubmit)}>
-                <h1 className="text-3xl font-bold text-black font-quickSand">
+                <h1 className="text-3xl sm:text-xl font-bold text-black font-quickSand">
                   Reset Your Password
                 </h1>
                 <div className="mt-1 flex flex-col">
@@ -2041,7 +2140,7 @@ const StallViewComponent = () => {
                   <input
                     type="password"
                     {...register("oldPassword")}
-                    className="border border-black h-12 rounded-lg text-black px-3 font-quickSand font-semibold text-sm"
+                    className="border border-black h-12 sm:h-8 rounded-lg text-black px-3 font-quickSand font-semibold text-sm"
                   />
                   {customErrors.oldPassword && (
                     <p className="text-red text-sm mt-1">
@@ -2049,13 +2148,13 @@ const StallViewComponent = () => {
                     </p>
                   )}
 
-                  <label className="text-black font-bold font-quickSand text-base mt-4">
+                  <label className="text-black font-bold font-quickSand text-base mt-4 sm:mt-1">
                     *New Password
                   </label>
                   <input
                     type="password"
                     {...register("newPassword")}
-                    className="border border-black h-12 rounded-lg text-black px-3 font-quickSand font-semibold text-sm"
+                    className="border border-black h-12 sm:h-8 rounded-lg text-black px-3 font-quickSand font-semibold text-sm"
                   />
                   {customErrors.newPassword && (
                     <p className="text-red text-sm mt-1">
@@ -2063,13 +2162,13 @@ const StallViewComponent = () => {
                     </p>
                   )}
 
-                  <label className="text-black font-bold font-quickSand text-base mt-4">
+                  <label className="text-black font-bold font-quickSand text-base mt-4 sm:mt-1">
                     *Re-Type Password
                   </label>
                   <input
                     type="password"
                     {...register("confirmPassword")}
-                    className="border border-black h-12 rounded-lg text-black px-3 font-quickSand font-semibold text-sm"
+                    className="border border-black h-12 sm:h-8 rounded-lg text-black px-3 font-quickSand font-semibold text-sm"
                   />
                   {customErrors.confirmPassword && (
                     <p className="text-red text-sm mt-1">
@@ -2084,21 +2183,21 @@ const StallViewComponent = () => {
 
                 <button
                   type="submit"
-                  className="mt-10 bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto"
+                  className="md:mt-10 lg:mt-10 mt-2 sx:mt-3 bg-black text-white px-6 py-3 sm:py-1 rounded-lg font-lato font-bold text-base w-full md:w-auto"
                 >
                   Reset Password
                 </button>
                 <button
                   onClick={() => setFromLink(false)}
                   type="button"
-                  className="ml-4 mt-10 bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto"
+                  className="md:ml-4 lg:ml-4 sm:md-1 md:mt-10 mt-2 bg-black text-white px-6 py-3 sm:py-1 rounded-lg font-lato font-bold text-base w-full md:w-auto"
                 >
                   Close
                 </button>
               </form>
             ) : (
               <>
-                <h1 className=" text-3xl font-bold text-black font-quickSand">
+                <h1 className=" text-3xl sm:text-xl font-bold text-black font-quickSand">
                   Password Reset Successful
                 </h1>
                 <div className=" mt-11 flex flex-col justify-center items-center gap-7">

@@ -34,8 +34,8 @@ export default function LoginPage() {
         //   position: toast.POSITION.TOP_RIGHT,
         // });
         Cookies.set("role", "admin");
-        sessionStorage.setItem("token", user.token)
-        sessionStorage.setItem("role", "admin");
+        localStorage.setItem("token", user.token)
+        localStorage.setItem("role", "admin");
         router.push("/admin");
       } else {
         toast.error(user.message, {
@@ -68,7 +68,7 @@ export default function LoginPage() {
         <div className="md:w-[37%] w-full md:px-4 px-0 flex flex-col items-center mt-5 md:mt-0">
           <div className="w-full justify-between min-h-[80%]">
             <div className="font-quickSand font-bold md:text-3xl text-2xl text-static-black text-center mt-2 md:mt-6">
-              Admin Login
+              DEV Admin Login
             </div>
             <div className="bg-brand-color md:p-6 p-4 w-full rounded-2xl mt-5 md:mt-8">
               <form

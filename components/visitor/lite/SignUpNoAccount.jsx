@@ -268,7 +268,7 @@ const SignUpNoAccount = () => {
                           name={name}
                           value={value}
                           onChange={onChange}
-                          inputClass="!rounded-lg !text-black !font-quickSand !font-semibold !text-sm"
+                          inputclassName="!rounded-lg !text-black !font-quickSand !font-semibold !text-sm"
                           inputStyle={{
                             width: "100%",
                             maxWidth: "100%",
@@ -292,17 +292,17 @@ const SignUpNoAccount = () => {
                 {process ? (
                   <button
                     type="button"
-                    class="bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto inline-flex items-center"
+                    className="bg-black text-white px-6 py-3 rounded-lg font-lato font-bold text-base w-full md:w-auto inline-flex items-center"
                     disabled
                   >
                     <svg
-                      class="animate-spin h-5 w-5 mr-3 text-white"
+                      className="animate-spin h-5 w-5 mr-3 text-white"
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                     >
                       <circle
-                        class="opacity-25"
+                        className="opacity-25"
                         cx="12"
                         cy="12"
                         r="10"
@@ -310,7 +310,7 @@ const SignUpNoAccount = () => {
                         stroke-width="4"
                       ></circle>
                       <path
-                        class="opacity-75"
+                        className="opacity-75"
                         fill="currentColor"
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                       ></path>
