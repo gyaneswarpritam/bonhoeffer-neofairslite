@@ -63,9 +63,8 @@ const Forgetpassword = () => {
                     className=" border border-black h-12 rounded-lg text-black px-3  font-quickSand font-semibold text-sm"
                   />
                   <p
-                    className={`text-red font-semibold font-lato text-xs mt-2 ${
-                      emailError ? "block" : " hidden"
-                    }`}
+                    className={`text-red font-semibold font-lato text-xs mt-2 ${emailError ? "block" : " hidden"
+                      }`}
                   >
                     {emailError}
                   </p>
@@ -83,7 +82,7 @@ const Forgetpassword = () => {
                   alt="lite-logo"
                   width={3000}
                   height={3000}
-                  className=" w-full max-w-[205px]"
+                  className=" w-full max-w-[105px]"
                 ></Image>
               </div>
             </>

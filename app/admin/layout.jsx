@@ -21,7 +21,7 @@ export default function RootLayout({ children }) {
 
   useEffect(() => {
     // Ensure this runs only on the client
-    const storedAdminId = localStorage.getItem("id");
+    const storedAdminId = localStorage.getItem("token");
     const role = localStorage.getItem("role");
 
     if (role == "exhibitor") {

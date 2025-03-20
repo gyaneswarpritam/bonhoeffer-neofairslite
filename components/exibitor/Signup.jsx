@@ -278,7 +278,7 @@ const Signup = () => {
                         alt="lite-logo"
                         width={3000}
                         height={3000}
-                        className="w-full max-w-[205px]"
+                        className="w-full max-w-[105px]"
                       />
                     </div>
                   </form>
@@ -490,7 +490,7 @@ const Signup = () => {
                     alt="lite-logo"
                     width={3000}
                     height={3000}
-                    className="w-full max-w-[205px]"
+                    className="w-full max-w-[105px]"
                   />
                 </div>
               </div>

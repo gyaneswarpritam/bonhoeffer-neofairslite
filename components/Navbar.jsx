@@ -9,7 +9,7 @@ const Navbar = () => {
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Image
           alt=""
-          className="md:h-auto md:w-64 h-10 w-auto"
+          className="md:h-auto md:w-64 h-10 w-auto  max-w-[105px]"
           width={500}
           height={500}
           src={`${BUCKET_URL}/neofairs-lite/logo.svg`}

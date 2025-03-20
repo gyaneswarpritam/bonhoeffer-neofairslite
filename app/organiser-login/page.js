@@ -57,7 +57,7 @@ export default function LoginPage() {
             <div className="md:bg-[transparent] bg-black-2 w-full md:w-[unset] flex flex-col items-center md:block">
               <Image
                 alt=""
-                className="md:h-auto md:w-64 h-10 w-auto"
+                className="md:h-auto md:w-64 h-10 w-auto  max-w-[105px]"
                 width={500}
                 height={500}
                 src={`${BUCKET_URL}/login-page/logo-variant.svg`}

@@ -434,7 +434,7 @@ const SignUpWithAccount = () => {
                 alt="lite-logo"
                 width={3000}
                 height={3000}
-                className=" w-full max-w-[205px]"
+                className=" w-full max-w-[105px]"
               ></Image>
             </div>
           </>

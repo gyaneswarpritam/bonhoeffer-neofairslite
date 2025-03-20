@@ -141,7 +141,7 @@ const SignUpNoAccount = () => {
                     alt="lite-logo"
                     width={3000}
                     height={3000}
-                    className="w-full max-w-[205px]"
+                    className="w-full max-w-[105px]"
                   />
                 </div>
               </form>
@@ -276,7 +276,7 @@ const SignUpNoAccount = () => {
                             border: "solid 1px #23272D",
                           }}
                           country={"in"}
-                          // onChange={(e) => handlePhoneChange(e)}
+                        // onChange={(e) => handlePhoneChange(e)}
                         />
                       )}
                       control={control}
